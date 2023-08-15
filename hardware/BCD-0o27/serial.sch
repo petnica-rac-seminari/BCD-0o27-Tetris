@@ -1,0 +1,311 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 6 8
+Title "Serial Communication"
+Date "2021-09-12"
+Rev "0"
+Comp "Florian Schuetz"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text HLabel 3000 3800 0    50   Input ~ 0
+USB_D_IN+
+Text HLabel 3000 3900 0    50   Input ~ 0
+USB_D_IN-
+$Comp
+L Interface_USB:CH340C U?
+U 1 1 6158CE24
+P 3500 3900
+F 0 "U?" H 3750 4450 50  0000 C CNN
+F 1 "CH340C" H 3750 3350 50  0000 C CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 3550 3350 50  0001 L CNN
+F 3 "https://datasheet.lcsc.com/szlcsc/Jiangsu-Qin-Heng-CH340C_C84681.pdf" H 3150 4700 50  0001 C CNN
+	1    3500 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3100 3800 3000 3800
+Wire Wire Line
+	3100 3900 3000 3900
+NoConn ~ 3100 3600
+Wire Wire Line
+	3500 2900 4900 2900
+$Comp
+L Device:C C?
+U 1 1 6158EB8A
+P 4900 3050
+F 0 "C?" H 5015 3096 50  0000 L CNN
+F 1 "100nF" H 5015 3005 50  0000 L CNN
+F 2 "" H 4938 2900 50  0001 C CNN
+F 3 "~" H 4900 3050 50  0001 C CNN
+	1    4900 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0122
+U 1 1 6158F7A8
+P 4900 3200
+F 0 "#PWR0122" H 4900 2950 50  0001 C CNN
+F 1 "GND" H 4905 3027 50  0000 C CNN
+F 2 "" H 4900 3200 50  0001 C CNN
+F 3 "" H 4900 3200 50  0001 C CNN
+	1    4900 3200
+	1    0    0    -1  
+$EndComp
+Connection ~ 3500 2900
+$Comp
+L Device:R R?
+U 1 1 6159097D
+P 4250 3500
+F 0 "R?" V 4043 3500 50  0000 C CNN
+F 1 "470" V 4134 3500 50  0000 C CNN
+F 2 "" V 4180 3500 50  0001 C CNN
+F 3 "~" H 4250 3500 50  0001 C CNN
+	1    4250 3500
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4100 3500 3900 3500
+Wire Wire Line
+	3900 4300 4400 4300
+Wire Wire Line
+	3900 4200 4400 4200
+Wire Wire Line
+	3500 4500 3500 4550
+$Comp
+L power:GND #PWR0123
+U 1 1 61592289
+P 3500 4550
+F 0 "#PWR0123" H 3500 4300 50  0001 C CNN
+F 1 "GND" H 3505 4377 50  0000 C CNN
+F 2 "" H 3500 4550 50  0001 C CNN
+F 3 "" H 3500 4550 50  0001 C CNN
+	1    3500 4550
+	1    0    0    -1  
+$EndComp
+Text Label 4250 4300 0    50   ~ 0
+~RTS
+Text Label 4250 4200 0    50   ~ 0
+~DTR
+NoConn ~ 3900 4100
+NoConn ~ 3900 4000
+Wire Wire Line
+	5850 4300 6100 4300
+Text Label 5850 3600 0    50   ~ 0
+~DTR
+Text Label 5850 4300 0    50   ~ 0
+~RTS
+$Comp
+L Device:R R?
+U 1 1 61595A3B
+P 6400 3600
+F 0 "R?" V 6193 3600 50  0000 C CNN
+F 1 "10k" V 6284 3600 50  0000 C CNN
+F 2 "" V 6330 3600 50  0001 C CNN
+F 3 "~" H 6400 3600 50  0001 C CNN
+	1    6400 3600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6550 3600 7100 3600
+Wire Wire Line
+	7400 3400 7400 3300
+Wire Wire Line
+	7400 3300 7800 3300
+Text HLabel 7800 3300 2    50   Input ~ 0
+PROG_EN
+$Comp
+L Device:R R?
+U 1 1 615974B1
+P 6400 4300
+F 0 "R?" V 6193 4300 50  0000 C CNN
+F 1 "10k" V 6284 4300 50  0000 C CNN
+F 2 "" V 6330 4300 50  0001 C CNN
+F 3 "~" H 6400 4300 50  0001 C CNN
+	1    6400 4300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6550 4300 7100 4300
+Wire Wire Line
+	7400 4500 7400 4600
+Wire Wire Line
+	7400 4600 7750 4600
+Text HLabel 7750 4600 2    50   Input ~ 0
+PROG_IO0
+Wire Wire Line
+	7400 4100 7400 4000
+Wire Wire Line
+	7400 3800 7400 3900
+Wire Wire Line
+	7400 3900 6100 3900
+Connection ~ 6100 4300
+Wire Wire Line
+	6100 4300 6250 4300
+Wire Wire Line
+	6100 3900 6100 4300
+Wire Wire Line
+	6200 3600 6250 3600
+Wire Wire Line
+	5850 3600 6200 3600
+Connection ~ 6200 3600
+Wire Wire Line
+	7400 4000 6200 4000
+Wire Wire Line
+	6200 4000 6200 3600
+Wire Wire Line
+	3900 3600 4400 3600
+Wire Notes Line
+	5600 3050 8450 3050
+Wire Notes Line
+	8450 3050 8450 4900
+Wire Notes Line
+	8450 4900 5600 4900
+Wire Notes Line
+	5600 4900 5600 3050
+Text Notes 7750 3150 0    50   ~ 0
+Auto programmer
+Text HLabel 4400 3500 2    50   Output ~ 0
+TXD
+Text HLabel 4400 3600 2    50   Input ~ 0
+RXD
+Wire Wire Line
+	3500 3300 3500 3200
+Wire Wire Line
+	3400 3300 3400 3200
+$Comp
+L Transistor_BJT:BC817 Q?
+U 1 1 615AF4A0
+P 7300 3600
+F 0 "Q?" H 7491 3646 50  0000 L CNN
+F 1 "BC817" H 7491 3555 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 7500 3525 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/BC818-D.pdf" H 7300 3600 50  0001 L CNN
+	1    7300 3600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transistor_BJT:BC817 Q?
+U 1 1 615B0946
+P 7300 4300
+F 0 "Q?" H 7491 4254 50  0000 L CNN
+F 1 "BC817" H 7491 4345 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 7500 4225 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/BC818-D.pdf" H 7300 4300 50  0001 L CNN
+	1    7300 4300
+	1    0    0    1   
+$EndComp
+NoConn ~ 3900 3900
+NoConn ~ 3900 3800
+Text Notes 7600 4150 0    50   ~ 0
+DTR RTS -> EN IO0\n 1    1       1  1\n 0    0       1  1\n 1    0       0  1\n 0    1       1  0
+Text HLabel 1250 1950 1    50   Input ~ 0
+5V
+Wire Wire Line
+	1250 1950 1250 2300
+Wire Wire Line
+	1250 2300 1800 2300
+$Comp
+L Regulator_Linear:AMS1117-3.3 U?
+U 1 1 615BC86E
+P 2450 2300
+F 0 "U?" H 2450 2542 50  0000 C CNN
+F 1 "AMS1117-3.3" H 2450 2451 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" H 2450 2500 50  0001 C CNN
+F 3 "http://www.advanced-monolithic.com/pdf/ds1117.pdf" H 2550 2050 50  0001 C CNN
+F 4 "C347222" H 2450 2300 50  0001 C CNN "#LCSC"
+	1    2450 2300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 615C1402
+P 1800 2500
+F 0 "C?" H 1915 2546 50  0000 L CNN
+F 1 "10uF" H 1915 2455 50  0000 L CNN
+F 2 "" H 1838 2350 50  0001 C CNN
+F 3 "~" H 1800 2500 50  0001 C CNN
+	1    1800 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 615C1E2C
+P 3000 2500
+F 0 "C?" H 3115 2546 50  0000 L CNN
+F 1 "10uF" H 3115 2455 50  0000 L CNN
+F 2 "" H 3038 2350 50  0001 C CNN
+F 3 "~" H 3000 2500 50  0001 C CNN
+	1    3000 2500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2750 2300 3000 2300
+Wire Wire Line
+	3000 2300 3000 2350
+Wire Wire Line
+	1800 2350 1800 2300
+Connection ~ 1800 2300
+Wire Wire Line
+	1800 2300 2150 2300
+$Comp
+L power:GND #PWR0124
+U 1 1 615C32D5
+P 1800 2650
+F 0 "#PWR0124" H 1800 2400 50  0001 C CNN
+F 1 "GND" H 1805 2477 50  0000 C CNN
+F 2 "" H 1800 2650 50  0001 C CNN
+F 3 "" H 1800 2650 50  0001 C CNN
+	1    1800 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0125
+U 1 1 615C333C
+P 2450 2650
+F 0 "#PWR0125" H 2450 2400 50  0001 C CNN
+F 1 "GND" H 2455 2477 50  0000 C CNN
+F 2 "" H 2450 2650 50  0001 C CNN
+F 3 "" H 2450 2650 50  0001 C CNN
+	1    2450 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0126
+U 1 1 615C3819
+P 3000 2650
+F 0 "#PWR0126" H 3000 2400 50  0001 C CNN
+F 1 "GND" H 3005 2477 50  0000 C CNN
+F 2 "" H 3000 2650 50  0001 C CNN
+F 3 "" H 3000 2650 50  0001 C CNN
+	1    3000 2650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2450 2650 2450 2600
+Wire Wire Line
+	3000 2300 3500 2300
+Connection ~ 3000 2300
+Wire Wire Line
+	3500 3200 3400 3200
+Connection ~ 3500 3200
+Wire Wire Line
+	3500 3200 3500 2900
+Wire Wire Line
+	3500 2300 3500 2900
+Wire Notes Line
+	1000 1650 5350 1650
+Wire Notes Line
+	5350 1650 5350 4900
+Wire Notes Line
+	5350 4900 1000 4900
+Wire Notes Line
+	1000 4900 1000 1650
+Text Notes 4600 1800 0    50   ~ 0
+3V3 USB to UART
+$EndSCHEMATC

@@ -1,0 +1,31 @@
+# Generic Stuff
+.DS_Store
+
+# For PCB designed using KiCad
+
+## Temporary files
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*~
+_autosave-*
+*.tmp
+*-cache.lib
+*-save.pro
+*-save.kicad_pcb
+*.sch-bak
+fp-info-cache
+
+### Netlist files (exported from Eeschema)
+*.net
+
+## Autorouter files (exported from Pcbnew)
+*.dsn
+*.ses 
+
+## KiCAD backups
+electronic_design/BCD-Oo26/BCD-Oo26-backups/
+
+# Development environment
+doc/workspace.code-workspace

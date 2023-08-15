@@ -1,0 +1,174 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 4 8
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L power:GND #PWR0127
+U 1 1 612B9D16
+P 7450 4150
+F 0 "#PWR0127" H 7450 3900 50  0001 C CNN
+F 1 "GND" H 7455 3977 50  0000 C CNN
+F 2 "" H 7450 4150 50  0001 C CNN
+F 3 "" H 7450 4150 50  0001 C CNN
+	1    7450 4150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4600 3050 5700 3050
+Wire Wire Line
+	5700 3050 5700 3850
+Wire Wire Line
+	4600 4150 5700 4150
+Connection ~ 5700 4150
+Wire Wire Line
+	5700 4150 7450 4150
+Wire Wire Line
+	4600 4050 5700 4050
+Connection ~ 5700 4050
+Wire Wire Line
+	5700 4050 5700 4150
+Wire Wire Line
+	4600 3850 5700 3850
+Wire Wire Line
+	5700 3850 5700 4050
+Wire Wire Line
+	4600 3750 4700 3750
+Text HLabel 4700 3750 2    50   Input ~ 0
+~RST
+Wire Wire Line
+	4600 3650 4700 3650
+Text HLabel 4700 3650 2    50   Input ~ 0
+DC
+Wire Wire Line
+	4600 3550 4700 3550
+Wire Wire Line
+	4600 3450 4700 3450
+Text HLabel 4700 3550 2    50   Input ~ 0
+MOSI
+Text HLabel 4700 3450 2    50   Input ~ 0
+SCK
+Wire Wire Line
+	4600 3150 4700 3150
+Text HLabel 4700 3150 2    50   Input ~ 0
+CS
+Text HLabel 5100 2250 1    50   Input ~ 0
+3V3
+$Comp
+L Device:C C301
+U 1 1 612BCBFE
+P 5400 2550
+F 0 "C301" H 5515 2596 50  0000 L CNN
+F 1 "100nF" H 5515 2505 50  0000 L CNN
+F 2 "" H 5438 2400 50  0001 C CNN
+F 3 "~" H 5400 2550 50  0001 C CNN
+	1    5400 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0128
+U 1 1 612BD792
+P 5400 2700
+F 0 "#PWR0128" H 5400 2450 50  0001 C CNN
+F 1 "GND" H 5405 2527 50  0000 C CNN
+F 2 "" H 5400 2700 50  0001 C CNN
+F 3 "" H 5400 2700 50  0001 C CNN
+	1    5400 2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5100 2250 5100 2400
+Wire Wire Line
+	5100 3250 4600 3250
+Wire Wire Line
+	4600 3350 5100 3350
+Wire Wire Line
+	5100 3350 5100 3250
+Connection ~ 5100 3250
+Wire Wire Line
+	5400 2400 5100 2400
+Connection ~ 5100 2400
+Wire Wire Line
+	5100 2400 5100 3250
+$Comp
+L Device:Q_NPN_BEC Q301
+U 1 1 612BEE31
+P 6600 3600
+F 0 "Q301" H 6791 3646 50  0000 L CNN
+F 1 "CBI S8050 J3Y" H 6791 3555 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 6800 3700 50  0001 C CNN
+F 3 "https://datasheet.lcsc.com/lcsc/2105241830_CBI-S8050-J3Y_C2828466.pdf" H 6600 3600 50  0001 C CNN
+F 4 "C2828466" H 6600 3600 50  0001 C CNN "#LCSC"
+	1    6600 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4600 3950 6200 3950
+Wire Wire Line
+	6700 3950 6700 3800
+Wire Wire Line
+	6700 3400 6700 3250
+Wire Wire Line
+	6700 3250 6500 3250
+$Comp
+L Device:R R301
+U 1 1 612C31DE
+P 6350 3250
+F 0 "R301" V 6143 3250 50  0000 C CNN
+F 1 "10k" V 6234 3250 50  0000 C CNN
+F 2 "" V 6280 3250 50  0001 C CNN
+F 3 "~" H 6350 3250 50  0001 C CNN
+	1    6350 3250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6200 3250 5100 3250
+$Comp
+L Device:R R303
+U 1 1 612C3A6E
+P 6350 3950
+F 0 "R303" V 6143 3950 50  0000 C CNN
+F 1 "10" V 6234 3950 50  0000 C CNN
+F 2 "" V 6280 3950 50  0001 C CNN
+F 3 "~" H 6350 3950 50  0001 C CNN
+	1    6350 3950
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6500 3950 6700 3950
+Text HLabel 6100 3600 0    50   Input ~ 0
+BKL
+$Comp
+L Device:R R302
+U 1 1 612C70FB
+P 6250 3600
+F 0 "R302" V 6043 3600 50  0000 C CNN
+F 1 "1k" V 6134 3600 50  0000 C CNN
+F 2 "" V 6180 3600 50  0001 C CNN
+F 3 "~" H 6250 3600 50  0001 C CNN
+	1    6250 3600
+	0    1    1    0   
+$EndComp
+$Comp
+L Symbols:ST7735S LCD301
+U 1 1 61621A4C
+P 4300 3600
+F 0 "LCD301" H 4242 2735 50  0000 C CNN
+F 1 "ST7735S" H 4242 2826 50  0000 C CNN
+F 2 "Footprints:ST7735S-1.8-Inch-128x160px-tft" H 4300 3600 50  0001 C CNN
+F 3 "" H 4300 3600 50  0001 C CNN
+	1    4300 3600
+	-1   0    0    1   
+$EndComp
+Connection ~ 5700 3850
+$EndSCHEMATC

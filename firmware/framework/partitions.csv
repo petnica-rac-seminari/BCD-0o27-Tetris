@@ -1,0 +1,12 @@
+# Partition table for the BCD-0o27
+#
+# If you adjust the partition, make sure to also adjust the
+# menuconfig settings. More details see in the development
+# documentation.
+
+# Name,   Type, SubType, Offset,  Size, Flags
+# Note: if you have increased the bootloader size, make sure to update the offsets to avoid overlap
+nvs,      data, nvs,     0x9000, 0x6000,
+phy_init, data, phy,     0xf000, 0x1000,
+factory,  app,  factory, 0x10000,    2M,
+spiffs,   data, spiffs,  0x210000,   2M,

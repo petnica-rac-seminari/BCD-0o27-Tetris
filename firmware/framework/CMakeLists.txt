@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.16.0)
+set(CMAKE_CXX_STANDARD 17)
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+project(BCD-0o27_framework)
+spiffs_create_partition_image(spiffs data)

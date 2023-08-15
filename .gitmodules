@@ -1,0 +1,8 @@
+[submodule "firmware/framework/lib/gfx"]
+	path = firmware/framework/lib/gfx
+	url = https://gitlab.com/fschuetz/gfx
+	branch = main
+[submodule "firmware/framework/lib/libssh2"]
+	path = firmware/framework/lib/libssh2
+	url = https://gitlab.com/fschuetz/libssh2
+	branch = main

@@ -1,0 +1,8 @@
+(sym_lib_table
+  (lib (name "st7735s")(type "KiCad")(uri "${KIPRJMOD}/libs/LCDDisplay/symbols/st7735s.kicad_sym")(options "")(descr ""))
+  (lib (name "Espressif")(type "KiCad")(uri "${KIPRJMOD}/libs/Espressif/libraries/Espressif.kicad_sym")(options "")(descr ""))
+  (lib (name "Regulator_Voltage")(type "KiCad")(uri "${KIPRJMOD}/libs/Regulator_Voltage/Regulator_Voltage.kicad_sym")(options "")(descr ""))
+  (lib (name "MOSFETs")(type "KiCad")(uri "${KIPRJMOD}/libs/MOSFETs/MOSFETs.kicad_sym")(options "")(descr ""))
+  (lib (name "Battery_Protection")(type "KiCad")(uri "${KIPRJMOD}/libs/Battery_Protection/symbols/Battery_Protection.kicad_sym")(options "")(descr ""))
+  (lib (name "Connector_Debug")(type "KiCad")(uri "${KIPRJMOD}/libs/Connector_Debugger/symbols/Connector_Debug.kicad_sym")(options "")(descr ""))
+)

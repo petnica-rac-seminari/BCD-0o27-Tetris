@@ -1,0 +1,767 @@
+menu "BCD-0o26 Configuration"
+
+    choice CYBERDECK_VARIANT
+        prompt "Variant of the BCD-0o26"
+        default 34R7 if IDF_TARGET_ESP32
+        default 5KY if IDF_TARGET_ESP32S3
+
+        config 34R7
+            bool "BCD-0o26-34R7 (Green PCB)"
+        config 5KY
+            bool "BCD-0o26-5KY (Blue PCB)"
+    endchoice
+
+
+    menu "WiFi Configuration"
+        config WIFI_SCAN_LIST_SIZE
+        int "Max size of scan list"
+        range 0 20
+        default 10
+        help
+            The size of array that will be used to retrieve the list of access points.
+
+        config WIFI_SSID
+            string "WiFi SSID"
+            default "myssid"
+            help
+                SSID (network name) for the example to connect to.
+
+        config WIFI_PASSWORD
+            string "WiFi Password"
+            default "mypassword"
+            help
+                WiFi password (WPA or WPA2) for the example to use.
+
+        config WIFI_MAXIMUM_RETRY
+            int "Maximum retry"
+            default 5
+            help
+                Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
+
+        config TAG_WIFI
+            string "WiFi tag for logging"
+            default "WIFI"
+            help
+                Set the tag for WiFi log messages.
+
+        choice WIFI_LOG_LEVEL
+            bool "Log level for WiFi library"
+            default WIFI_LOG_EQUALS_DEFAULT
+
+            config WIFI_LOG_EQUALS_DEFAULT
+                bool "Same as default"
+            config WIFI_LOG_LEVEL_NONE
+                bool "No output"
+            config WIFI_LOG_LEVEL_ERROR
+                bool "Error"
+                depends on LOG_MAXIMUM_LEVEL >= 1
+            config WIFI_LOG_LEVEL_WARN
+                bool "Warning"
+                depends on LOG_MAXIMUM_LEVEL >= 2
+            config WIFI_LOG_LEVEL_INFO
+                bool "Info"
+                depends on LOG_MAXIMUM_LEVEL >= 3
+            config WIFI_LOG_LEVEL_DEBUG
+                bool "Debug"
+                depends on LOG_MAXIMUM_LEVEL >= 4
+            config WIFI_LOG_LEVEL_VERBOSE
+                bool "Verbose"
+                depends on LOG_MAXIMUM_LEVEL = 5
+        endchoice
+
+        config WIFI_LOG_LEVEL
+              int
+              default LOG_DEFAULT_LEVEL if WIFI_LOG_EQUALS_DEFAULT
+              default 0 if WIFI_LOG_LEVEL_NONE
+              default 1 if WIFI_LOG_LEVEL_ERROR
+              default 2 if WIFI_LOG_LEVEL_WARN
+              default 3 if WIFI_LOG_LEVEL_INFO
+              default 4 if WIFI_LOG_LEVEL_DEBUG
+              default 5 if WIFI_LOG_LEVEL_VERBOSE
+
+        config TAG_WIFI_DRIVER
+            string "WiFi driver tag for logging"
+            default "WiFi Driver"
+            help
+                Set the tag for WiFi driver log messages.
+
+        choice WIFI_DRIVER_LOG_LEVEL
+            bool "Log level for WiFi driver"
+            default WIFI_DRIVER_LOG_EQUALS_DEFAULT
+
+            config WIFI_DRIVER_LOG_EQUALS_DEFAULT
+                bool "Same as default"
+            config WIFI_DRIVER_LOG_LEVEL_NONE
+                bool "No output"
+            config WIFI_DRIVER_LOG_LEVEL_ERROR
+                bool "Error"
+                depends on LOG_MAXIMUM_LEVEL >= 1
+            config WIFI_DRIVER_LOG_LEVEL_WARN
+                bool "Warning"
+                depends on LOG_MAXIMUM_LEVEL >= 2
+            config WIFI_DRIVER_LOG_LEVEL_INFO
+                bool "Info"
+                depends on LOG_MAXIMUM_LEVEL >= 3
+            config WIFI_DRIVER_LOG_LEVEL_DEBUG
+                bool "Debug"
+                depends on LOG_MAXIMUM_LEVEL >= 4
+            config WIFI_DRIVER_LOG_LEVEL_VERBOSE
+                bool "Verbose"
+                depends on LOG_MAXIMUM_LEVEL = 5
+        endchoice  
+
+        config WIFI_DRIVER_LOG_LEVEL
+              int
+              default LOG_DEFAULT_LEVEL if WIFI_DRIVER_LOG_EQUALS_DEFAULT
+              default 0 if WIFI_DRIVER_LOG_LEVEL_NONE
+              default 1 if WIFI_DRIVER_LOG_LEVEL_ERROR
+              default 2 if WIFI_DRIVER_LOG_LEVEL_WARN
+              default 3 if WIFI_DRIVER_LOG_LEVEL_INFO
+              default 4 if WIFI_DRIVER_LOG_LEVEL_DEBUG
+              default 5 if WIFI_DRIVER_LOG_LEVEL_VERBOSE
+
+        config WIFI_AP_SAVE_FILE
+            string "Name of the file to store access point information"
+            default "aplist"
+            help
+                Set the filename for the file where information about stored
+                access points is kept.
+                
+    endmenu
+
+    menu "Display Configuration"
+
+        config DISPLAY_SUPPORT
+            bool "Display support"
+            default y
+            help
+                Enable display support.
+                
+
+        config LCD_WIDTH
+            int "Display width"
+            default 128
+            depends on DISPLAY_SUPPORT
+            help
+                The width of the display in pixels.
+
+        config LCD_HEIGHT
+            int "Display height"
+            default 160
+            depends on DISPLAY_SUPPORT
+            help
+                The height of the display in pixels.
+
+        choice LCD_HOST
+            prompt "SPI host for display"
+            default SPI2_HOST
+            depends on DISPLAY_SUPPORT
+
+            config SPI2_HOST
+                bool "SPI 2"
+            config SPI3_HOST
+                bool "SPI3"
+        endchoice
+
+        config LCD_DMA_CHANNEL
+            int "DMA Channel"
+            range 0 2
+            default 2
+            depends on DISPLAY_SUPPORT
+            depends on IDF_TARGET_ESP32                # S2/S3/C3 do auto select
+            help
+                Which DMA channel is used to communicate with the display.
+        
+        config LCD_PIN_MISO
+            int "GPIO used for the MISO signal"
+            range -1 39 if 34R7
+            range -1 48 if 5KY
+            default -1
+            depends on DISPLAY_SUPPORT
+            help
+                Which GPIO is sending the MISO signals.
+            
+        config LCD_PIN_MOSI
+            int "GPIO used for the MOSI signal"
+            range -1 39 if 34R7
+            range -1 48 if 5KY
+            default 13 if 34R7
+            default 11 if 5KY 
+            depends on DISPLAY_SUPPORT
+            help
+                Which GPIO is sending the MOSI signals.
+
+        config LCD_PIN_CLK
+            int "GPIO used for the clock signal"
+            range -1 39 if 34R7
+            range -1 48 if 5KY
+            default 14 if 34R7
+            default 12 if 5KY
+            depends on DISPLAY_SUPPORT
+            help
+                Which GPIO is sending the clock signals.
+
+        config LCD_PIN_CS
+            int "GPIO used for the chip select signal"
+            range -1 39 if 34R7
+            range -1 48 if 5KY
+            default 15 if 34R7
+            default 10 if 5KY
+            depends on DISPLAY_SUPPORT
+            help
+                Which GPIO is sending the chip select signals.
+
+        config LCD_PIN_DC
+            int "GPIO used for the DC signal"
+            range -1 39 if 34R7
+            range -1 48 if 5KY
+            default 2 if 34R7
+            default 14 if 5KY
+            depends on DISPLAY_SUPPORT
+            help
+                Which GPIO is sending the DC signals.
+
+        config LCD_PIN_RST
+            int "GPIO used for the reset signal"
+            range -1 39 if 34R7
+            range -1 48 if 5KY
+            default 4 if 34R7
+            default 15 if 5KY
+            depends on DISPLAY_SUPPORT
+            help
+                Which GPIO is sending the reset signals.
+
+        config LCD_PIN_BCKL
+            int "GPIO used for the backlight signal"
+            range -1 39 if 34R7
+            range -1 48 if 5KY
+            default 5 if 34R7
+            default 16 if 5KY
+            depends on DISPLAY_SUPPORT
+            help
+                Which GPIO is sending the backlight signals.
+
+        choice LCD_MAD_COLOR_ORDER
+            prompt "LCD color order"
+            default MAD_RGB
+            depends on DISPLAY_SUPPORT
+
+            config MAD_RGB
+                bool "RGB"
+            config MAD_BGR
+                bool "BGR"
+        endchoice
+    endmenu
+
+    menu "Input Configuration"
+
+        config INPUT_SUPPORT
+            bool "Input support"
+            default y
+            help
+                Enable support for input device.
+
+        config  INPUT_PIN_DATA
+            int     "GPIO for data line"
+            range 0 39 if 34R7
+            range 0 48 if 5KY
+            default 25 if 34R7
+            default 4 if 5KY
+            help
+                GPIO used for the serial data stream carrying the input states.
+
+         config INPUT_PIN_CLK
+            int     "GPIO for clock signal"
+            range 0 39 if 34R7
+            range 0 48 if 5KY
+            default 32 if 34R7
+            default 6 if 5KY
+            help
+                GPIO used for the clock signal.
+
+         config INPUT_PIN_CLE
+            int     "GPIO for clock enable signal"
+            range 0 39 if 34R7
+            range 0 48 if 5KY
+            default 33 if 34R7
+            default 7 if 5KY
+            help
+                GPIO used for to enable / disable the clock signal.
+        
+        config  INPUT_PIN_LOAD
+            int     "GPIO for load signal"
+            range 0 39 if 34R7
+            range 0 48 if 5KY
+            default 26 if 34R7
+            default 5 if 5KY
+            help
+                GPIO used to latch the register (capture input states).
+
+        config TAG_INPUT
+            string "Input tag for logging"
+            default "Controller"
+            help
+                Set the tag for input log messages.
+
+    endmenu
+            
+    menu "LED Interface Configuration"
+
+        config LED_IF_NUM_LED
+            int "Number of WS2812 LEDs on the BCD."
+            default 6
+            help
+                Specify the number of WS2812 LEDs the led interface of the BCD 
+                has.
+
+        config LED_IF_CONCURRENCY
+            bool "Concurrent update of led interface"
+            default y
+            help
+                Set to false if the LED Interface should block when updating 
+                rather than run in its own thread to display patterns. 
+                (NOT RECOMMENDED unless you know what you are doing).
+
+        config LED_IF_THREAD_PRIORITY
+            int "Led interface thread priority level"
+            default 1
+            depends on LED_IF_CONCURRENCY
+            help
+                Set the priority level of the thread updating the led interface
+                concurrently. Make sure to choose an apropriate priority level
+                to not block other tasks. AVOID choosing a level higher than
+                18 as this will start to interfere with crucial system functions.
+
+        config LED_IF_THREAD_STACK_SIZE
+            int "Led interface thread stack size"
+            default 2048
+            depends on LED_IF_CONCURRENCY
+            help
+                Set the stack size for the led thread. The stack size is dependent
+                on the amount of stack used by your led pattern executor functions.
+                (If you get stack overflows, you might want to switch on stack
+                debugging and increase this value until you find the sweet spot.)
+
+        config LED_IF_RMT_TX_CHANNEL
+            int "RMT Channel that will be used to modulate the signal."
+            default 0
+            range 0 7
+            help
+                Defines that RMT Channel that will be used to modulate the 
+                signal. Valid values are defined by enum rmt_channel_t (0-7)
+
+        config LED_IF_RMT_TX_GPIO
+            int "GPIO number where the WS2812 LEDs are connected."
+            range 0 39 if 34R7
+            range 0 48 if 5KY
+            default 18 if 34R7
+            default 48 if 5KY
+            help
+                Specify which GPIO should be used to send the data signal to the
+                leds. Only Output pins can be used: 0-5 or 12-33 should be ok.
+
+        config LED_IF_RMT_INTR_NUM
+            int "RMT interrupt number"
+            default 19
+            help
+                Specify which interrupt number RMT uses.
+
+        config LED_IF_CONTROL_EN
+            int "GPIO for control chip enable"
+            range 0 39 if 34R7
+            range 0 48 if 5KY
+            default 19 if 34R7
+            default 47 if 5KY
+            help
+                GPIO number where to enable the logic level shifter (and thus 
+                the LED control).
+        
+        choice LED_IF_LED_TYPE
+            prompt "Type of the RGB LED"
+            default LED_IF_LED_TYPE_WS2812B
+
+            config LED_IF_LED_TYPE_WS2812B
+                bool "WS2812B"
+            config LED_IF_LED_TYPE_CUSTOM
+                bool "Custom"
+        endchoice
+
+        config LED_IF_BITS_PER_COLOR_CHANNEL
+            int "Bits per color channel"
+            default 8
+            range 1 32
+            help
+                The number of bits to use for a color channel. Note that this is
+                the number of bits used by the library. If it differs from the 
+                actual hardware capability of the led, it will be mapped to the
+                bit width of the hardware when displaying the color.
+
+        config LED_IF_BITS_RED_CHANNEL
+            int "Bits for the red color channel" if LED_IF_LED_TYPE_CUSTOM
+            default 8 if LED_IF_LED_TYPE_WS2812B
+            help
+                The amount of bits used for the red color channel. 
+
+        config LED_IF_BITS_GREEN_CHANNEL
+            int "Bits for the red color channel" if LED_IF_LED_TYPE_CUSTOM
+            default 8 if LED_IF_LED_TYPE_WS2812B
+            help
+                The amount of bits used for the green color channel. 
+
+        config LED_IF_BITS_BLUE_CHANNEL
+            int "Bits for the red color channel" if LED_IF_LED_TYPE_CUSTOM
+            default 8 if LED_IF_LED_TYPE_WS2812B
+            help
+                The amount of bits used for the blue color channel. 
+
+        choice LED_IF_COLOR_CHANNEL_ORDER
+            prompt "Order of color channels"
+            default LED_IF_COLOR_CHANNEL_ORDER_GRB if LED_IF_LED_TYPE_WS2812B
+
+            config LED_IF_COLOR_CHANNEL_ORDER_RGB
+                bool "Red - Green - Blue"
+            config LED_IF_COLOR_CHANNEL_ORDER_GRB 
+                bool "Green - Red - Blue"
+            config LED_IF_COLOR_CHANNEL_ORDER_RBG
+                bool "Red - Blue - Green"
+            config LED_IF_COLOR_CHANNEL_ORDER_BRG
+                bool "Blue - Red - Green"
+            config LED_IF_COLOR_CHANNEL_ORDER_BGR
+                bool "Blue - Green - Red"
+            config LED_IF_COLOR_CHANNEL_ORDER_GBR
+                bool "Green - Blue - Red"
+        endchoice
+
+
+        config LED_IF_T0H
+            int "0 bit high time"
+            default 14
+            help
+            Duration for which the analog signal must be high when a 0 bit is 
+            transmitted.
+
+        config LED_IF_T1H
+            int "1 bit high time"
+            default 52
+            help
+            Duration for which the analog signal must be high when a 1 bit is
+            transmitted.
+
+        config LED_IF_TL
+            int "low time for either bit"
+            default 52
+            help
+            Duration for which the analog signam must be low when a 0 or 1 bit
+            is transmitted. (0 and 1 bits both use the same low timing).
+
+        config TAG_LED_IF
+            string "LED tag for logging"
+            default "LED"
+            help
+                Set the tag for LED interface log messages.
+                
+    endmenu
+
+    menu "Terminal Configuration"
+
+        config COMMAND_PROMPT_STR
+            string  "The command prompt."
+            default "BCD> "
+            help
+                Set the promt for the console (terminal).
+
+        config CONSOLE_MAX_COMMAND_LINE_LENGTH
+            int "Max. command line length"
+            default 1024
+            help
+                Define the maximum length of a command line.
+
+        config COMMAND_STORE_HISTORY
+            bool "Store command history in file"
+            default n
+            help
+                Store the command history in a file to persist over reboots.
+
+        config COMMAND
+            string "Path and filename to store history" 
+            depends on COMMAND_STORE_HISTORY
+            default "/spiffs/cmdhistory"
+            help
+                Path and filename to store history.
+
+        config COMMAND_TASK_STACK_SIZE
+            int "Max stack size for task."
+            default 4096
+            help
+                Set the stack size for the terminal command thread. The stack size 
+                is dependent on the amount of stack used by the registered commands.
+                (If you get stack overflows, you might want to switch on stack
+                debugging and increase this value until you find the sweet spot.)
+
+        config TAG_CONSOLE
+            string "Console tag for logging"
+            default "CONSOLE"
+            help
+                Set the tag for console log messages.
+
+        choice CONSOLE_LOG_LEVEL
+                bool "Log level for the console"
+                default CONSOLE_LOG_EQUALS_DEFAULT
+
+                config CONSOLE_LOG_EQUALS_DEFAULT
+                    bool "Same as default"
+                config CONSOLE_LOG_LEVEL_NONE
+                    bool "No output"
+                config CONSOLE_LOG_LEVEL_ERROR
+                    bool "Error"
+                    depends on LOG_MAXIMUM_LEVEL >= 1
+                config CONSOLE_LOG_LEVEL_WARN
+                    bool "Warning"
+                    depends on LOG_MAXIMUM_LEVEL >= 2
+                config CONSOLE_LOG_LEVEL_INFO
+                    bool "Info"
+                    depends on LOG_MAXIMUM_LEVEL >= 3
+                config CONSOLE_LOG_LEVEL_DEBUG
+                    bool "Debug"
+                    depends on LOG_MAXIMUM_LEVEL >= 4
+                config CONSOLE_LOG_LEVEL_VERBOSE
+                    bool "Verbose"
+                    depends on LOG_MAXIMUM_LEVEL = 5
+            endchoice
+
+            config CONSOLE_LOG_LEVEL
+                int
+                default LOG_DEFAULT_LEVEL if CONSOLE_LOG_EQUALS_DEFAULT
+                default 0 if CONSOLE_LOG_LEVEL_NONE
+                default 1 if CONSOLE_LOG_LEVEL_ERROR
+                default 2 if CONSOLE_LOG_LEVEL_WARN
+                default 3 if CONSOLE_LOG_LEVEL_INFO
+                default 4 if CONSOLE_LOG_LEVEL_DEBUG
+                default 5 if CONSOLE_LOG_LEVEL_VERBOSE
+
+    endmenu
+            
+    menu "SAO+ Configuration"
+
+        config SAO_SCL
+            int "GPIO number of scl line"
+            default 1
+            help   
+                The GPIO number of the pin on the SAO+ port assigned to the
+                sdl line per default. Note, this gpio can also be used for
+                other signals than sdl of course.
+        
+        config SAO_SDA
+            int "GPIO number of sda line"
+            default 2
+            help   
+                The GPIO number of the pin on the SAO+ port assigned to the
+                sda line per default. Note, this gpio can also be used for
+                other signals than sda of course.
+
+        config SAO_PIN0
+            int "GPIO number of data pin 0"
+            default 3
+            help   
+                The GPIO number of the pin on the SAO+ port assigned to pin 1.
+
+        config SAO_PIN1
+            int "GPIO number of data pin 1"
+            default 8
+            help   
+                The GPIO number of the pin on the SAO+ port assigned to pin 2.
+
+    endmenu
+
+    menu "Modules Configuration"
+
+        menu "Cyberspace"
+
+            config CYBERSPACE_SSH_HOST
+                string "The address of the gateway into cyberspace."
+                default "ch405-labs.com"
+                help    
+                    Set the address at which the gateway to dial into cyberspcae
+                    sits at.
+
+            config CYBERSPACE_SSH_PORT
+                int "The port of the gateway into cyberspace."
+                default 1337
+                range 1 65535
+                help   
+                    Set the port which the gateway into cyberspace is listening
+                    to.
+
+            choice CYBERSPACE_AUTH_METHOD
+                prompt "Authentication method for accessing cyberspace"
+                default CYBERSPACE_AUTH_KEY
+                depends on DISPLAY_SUPPORT
+
+                config CYBERSPACE_AUTH_KEY
+                    bool "Authenticate by public / private key"
+                    help
+                        Make sure to place the key in spiffs.
+                config CYBERSPACE_AUTH_PASS
+                    bool "Authenticate with username / password"
+            endchoice
+
+            config CYBERSPACE_SSH_USER
+                string "The username for cyberspace"
+                default "bcd_test"
+                help
+                    The username to use for logging into the cyberspace geteway.
+
+            config CYBERSPACE_SSH_KEYFILE
+                string "The base name of the keyfile"
+                default "bcd_id_rsa"
+                depends on CYBERSPACE_AUTH_KEY
+                help
+                    The basename of the keyfiles. The private key must not have
+                    an extension and the public key must have the extension .pub.
+
+            config CYBERSPACE_SSH_PASS
+                string "The password for accessing cyberspace"
+                default "bcd_test"
+                depends on CYBERSPACE_AUTH_PASS
+                help  
+                    The password to log into the cyberspace gateway.
+
+            config CYBERSPACE_RECV_BUF_LEN
+                int  "The size of the receive buffer"
+                default 168
+                help
+                    The size of the buffer which will receive data from the 
+                    gateway into cyberspace. 
+
+            config CYBERSPACE_RETRY_STOP_CMD_EXEC
+                int "Number of retries to stop command execution of console"
+                default 3
+                help   
+                    The number of times to retry to stop console command 
+                    execution in case of failure.
+
+            config CYBERSPACE_RETRY_START_CMD_EXEC
+                int "Number of retries to stop command execution of console"
+                default 10
+                help   
+                    The number of times to retry to stop console command 
+                    execution in case of failure.
+
+            config TAG_CYBERSPACE
+                string "Cyberspace tag for logging"
+                default "CYBERSPACE"
+                help
+                    Set the tag for Cyberspace module log messages.
+
+            choice MOD_CYBERSPACE_LOG_LEVEL
+                bool "Log level for Cyberspace module"
+                default MOD_CYBERSPACE_LOG_EQUALS_DEFAULT
+
+                config MOD_CYBERSPACE_LOG_EQUALS_DEFAULT
+                    bool "Same as default"
+                config MOD_CYBERSPACE_LOG_LEVEL_NONE
+                    bool "No output"
+                config MOD_CYBERSPACE_LOG_LEVEL_ERROR
+                    bool "Error"
+                    depends on LOG_MAXIMUM_LEVEL >= 1
+                config MOD_CYBERSPACE_LOG_LEVEL_WARN
+                    bool "Warning"
+                    depends on LOG_MAXIMUM_LEVEL >= 2
+                config MOD_CYBERSPACE_LOG_LEVEL_INFO
+                    bool "Info"
+                    depends on LOG_MAXIMUM_LEVEL >= 3
+                config MOD_CYBERSPACE_LOG_LEVEL_DEBUG
+                    bool "Debug"
+                    depends on LOG_MAXIMUM_LEVEL >= 4
+                config MOD_CYBERSPACE_LOG_LEVEL_VERBOSE
+                    bool "Verbose"
+                    depends on LOG_MAXIMUM_LEVEL = 5
+            endchoice
+
+            config MOD_CYBERSPACE_LOG_LEVEL
+                int
+                default LOG_DEFAULT_LEVEL if MOD_CYBERSPACE_LOG_EQUALS_DEFAULT
+                default 0 if MOD_CYBERSPACE_LOG_LEVEL_NONE
+                default 1 if MOD_CYBERSPACE_LOG_LEVEL_ERROR
+                default 2 if MOD_CYBERSPACE_LOG_LEVEL_WARN
+                default 3 if MOD_CYBERSPACE_LOG_LEVEL_INFO
+                default 4 if MOD_CYBERSPACE_LOG_LEVEL_DEBUG
+                default 5 if MOD_CYBERSPACE_LOG_LEVEL_VERBOSE
+
+        endmenu
+
+        menu "Snake"
+            config  TAG_MOD_SNAKE
+            string "Tag for logging"
+            default "SNAKE"
+            help
+                The tag to use for log messages.
+
+            choice MOD_SNAKE_LOG_LEVEL
+                bool "Log level for Snake module"
+                default MOD_SNAKE_LOG_EQUALS_DEFAULT
+
+                config MOD_SNAKE_LOG_EQUALS_DEFAULT
+                    bool "Same as default"
+                config MOD_SNAKE_LOG_LEVEL_NONE
+                    bool "No output"
+                config MOD_SNAKE_LOG_LEVEL_ERROR
+                    bool "Error"
+                    depends on LOG_MAXIMUM_LEVEL >= 1
+                config MOD_SNAKE_LOG_LEVEL_WARN
+                    bool "Warning"
+                    depends on LOG_MAXIMUM_LEVEL >= 2
+                config MOD_SNAKE_LOG_LEVEL_INFO
+                    bool "Info"
+                    depends on LOG_MAXIMUM_LEVEL >= 3
+                config MOD_SNAKE_LOG_LEVEL_DEBUG
+                    bool "Debug"
+                    depends on LOG_MAXIMUM_LEVEL >= 4
+                config MOD_SNAKE_LOG_LEVEL_VERBOSE
+                    bool "Verbose"
+                    depends on LOG_MAXIMUM_LEVEL = 5
+            endchoice
+
+            config MOD_SNAKE_LOG_LEVEL
+                int
+                default LOG_DEFAULT_LEVEL if MOD_SNAKE_LOG_EQUALS_DEFAULT
+                default 0 if MOD_SNAKE_LOG_LEVEL_NONE
+                default 1 if MOD_SNAKE_LOG_LEVEL_ERROR
+                default 2 if MOD_SNAKE_LOG_LEVEL_WARN
+                default 3 if MOD_SNAKE_LOG_LEVEL_INFO
+                default 4 if MOD_SNAKE_LOG_LEVEL_DEBUG
+                default 5 if MOD_SNAKE_LOG_LEVEL_VERBOSE
+        endmenu
+
+    endmenu
+
+    menu "Development Configuration"
+
+        config DEBUG_STACK
+            bool "Stack debugging"
+            default false
+            help
+                Enable stack debugging information such as high watermark, ...
+
+        config TAG_STACK
+            string "Stack tag for logging"
+            depends on DEBUG_STACK
+            default "STACK"
+            help
+                Set the default tag for logging stack events.
+
+        config DEBUG_HEAP
+            bool "Heap debugging"
+            default false
+            help
+                Enable heap debugging information such as high watermark, ...
+
+        config TAG_HEAP
+            string "Heap tag for logging"
+            depends on DEBUG_HEAP
+            default "HEAP"
+            help
+                Set the default tag for logging heap events.
+    endmenu
+
+endmenu
