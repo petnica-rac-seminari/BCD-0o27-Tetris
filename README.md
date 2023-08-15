@@ -1,3 +1,5 @@
+CHECK THE DOCUMENTATION FOLDER FOR INFORMATION ABOUT THE HARDWARE AND HOW TO BUILD IT.
+
 The BalcCon Cyberdeck 0o27 (BCD-0o27) comes with a development framework that makes it easier to add functionality to the cyberdeck. This development guide introduces the framework, advises coding best practices and provides examples for adding functionality to the BCD.
 Of course, you can ignore all of that and program the BCD either with esp-idf, rust, or any other framework that allows you to program ESP32 chips directly. However, this is not covered in this guideline.
 
