@@ -16,6 +16,35 @@ void Main::run(void) {
     ESP_LOGD(TAG_STACK, "Main:run(): High watermark for stack at start is: %d", uxHighWaterMark);
 #endif
 
+   if(hwcap.console) {
+// <--- Register console commands below -->
+        console.registerCommand("lsap", &lsap, "List available access points.");
+        console.registerCommand("wificfg", &wificfg, "Configure wifi.");
+        console.registerCommand("apinfo", &apinfo, 
+            "Show information about connected access point.");
+        
+        // System commands
+        console.registerCommand("version", &get_version, 
+            "Get version of chip and sdk.");
+        console.registerCommand("restart", &restart, 
+            "Software reset of the chip.");
+        console.registerCommand("free", &free_mem, 
+            "Get currently free heap memory.");
+        console.registerCommand("minheap", &heap_size, 
+            "Get minimum size of free heap memory that was available during" 
+            "programm execution.");
+#if WITH_TASKS_INFO
+        console.registerCommand("tasks", &tasks_info, 
+            "Get information about running tasks.");
+        console.registerCommand("taskstats", &stats_info, 
+            "Get statistics about running tasks.");
+        console.registerCommand("intstats", &interval_stats_info, 
+            "Get statistics about running tasks during interval.");
+#endif //WITH_TASKS_INFO 
+
+// <--- Register console commands above -->
+// Make sure to also include needed headers in main.hpp
+    }
     
     // We start a state machine and start in its root state
     //
