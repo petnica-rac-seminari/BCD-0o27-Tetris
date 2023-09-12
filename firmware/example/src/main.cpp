@@ -1,60 +1,6 @@
-#include "main.h"
+#include "main.hpp"
 #include "led_patterns/led_patterns.h"
 
-
-#ifdef CONFIG_DISPLAY_SUPPORT
-/****************************************************************
- * Config Display
- * 
- * Configure the display.
- * 
- * TODO:
- *  - Proper error checking
- ****************************************************************/
-int config_display() {
-    // Variable for error tracking
-    int error = ESP_OK;
-    
-    return error;
-}
-
-/****************************************************************
- * Lines overlay
- * 
- * Display some lines on the lcd.
- * 
- * TODO:
- *  - Proper error checking
- ****************************************************************/
-void lines_overlay() {
-    const font& f = Bm437_Acer_VGA_8x8_FON;
-    const char* text = "BCD-0o27";
-    srect16 text_rect = f.measure_text((ssize16)lcd.dimensions(),
-                            text).bounds();
-
-    draw::text(lcd,
-            text_rect.center((srect16)lcd.bounds()),
-            text,
-            f,
-            lcd_color::alice_blue);
-
-    for(int i = 1;i<100;i+=2) {
-        // calculate our extents
-        srect16 r(i*(lcd_type::width/100.0),
-                i*(lcd_type::height/100.0),
-                lcd_type::width-i*(lcd_type::width/100.0)-1,
-                lcd_type::height-i*(lcd_type::height/100.0)-1);
-        // draw the four lines
-        draw::line(lcd,srect16(0,r.y1,r.x1,lcd_type::height-1),lcd_color::light_blue);
-        draw::line(lcd,srect16(r.x2,0,lcd_type::width-1,r.y2),lcd_color::hot_pink);
-        draw::line(lcd,srect16(0,r.y2,r.x1,0),lcd_color::pale_green);
-        draw::line(lcd,srect16(lcd_type::width-1,r.y1,r.x2,lcd_type::height-1),lcd_color::yellow);
-        // the ESP32 wdt will get tickled
-        // unless we do this:
-        vTaskDelay(1);
-    }
-}
-#endif //CONFIG_DISPLAY_SUPPORT
 
 /****************************************************************
  * Main App
@@ -76,9 +22,9 @@ void Main::run(void) {
     // At this point we initialised all the peripherals and their drivers. They
     // are all ready to be used at this point.
     //
-    // NOTE: To use the framework, add menu items and modules. Of course, you
-    //       can also customize the whole main loop and do not need to use the
-    //       provided one.
+    // NOTE: To use the framework, add console commands and modules. Of course, 
+    //       you can also customize the whole main loop and do not need to use 
+    //       the provided one.
 
 
     // --> You might want to put you logic below here. Unless you know what you
@@ -91,7 +37,6 @@ void Main::run(void) {
     //
     // For this we start the led pattern scheduler and load a pattern. Then we
     // display the conference logo and display an overlay animation.
-
     led_err_t led_error = led.patternStart();
     ledPattern lp;
     lp.repetitions = 1;
@@ -130,8 +75,6 @@ void Main::run(void) {
         // Display the logo for half a second before moving on
         vTaskDelay(pdMS_TO_TICKS(500));
     }
-    // Draw the overlay animation
-    lines_overlay(); 
 
 
     // Clear screen
@@ -169,7 +112,7 @@ void Main::run(void) {
         mc.cursor->addEntry(mc.createActionItem("Logo Slideshow", logoSlideshow<lcd_type>, &lcd));
         mc.cursor->addEntry(mc.createActionItem("Party", discoFunction<lcd_type>, &lcd));
         mc.cursor->addEntry(mc.createActionItem("SAO Test", saoBlink<lcd_type>, &lcd));
-        mc.cursor->addEntry(mc.createActionItem("Demo Mode", demoMode<lcd_type>, &lcd));
+        mc.cursor->addEntry(mc.createActionItem("Demo Mode", modDemoMode::demoMode<lcd_type>, &lcd));
 
         // Settings Submenu
         mc.cursor->addEntry(mc.createSubmenu("Settings"));
@@ -291,10 +234,6 @@ ESP_LOGD(TAG_STACK, "Main:run(): High watermark for stack after after state exec
  *          away with this as we just initialised the leds and we know that 
  *          the scheduler is stopped. Also we know that there is no other thread
  *          that can start the scheduler at this point in time.
- * 
- * TODO:
- *  - Build a structure to reflect which devices / resources may be used and 
- *      which failed.
  */
 void Main::setup(void) {
 #ifdef CONFIG_DEBUG_STACK
@@ -304,15 +243,23 @@ void Main::setup(void) {
     uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
     ESP_LOGD(TAG_STACK, "Main:setup(): High watermark for stack at start is: %d", uxHighWaterMark);
 #endif
+    // Indicates which driver cluster we are initialising
+    uint8_t item_number = 0;
 
     // LED colors we us throughout the routing
-    rgbLEDPixel red = {
+    rgbLEDPixel critical_fail = {
         .red = 0x0F,
         .green = 0x00,
         .blue = 0x00
     };
 
-    rgbLEDPixel green = {
+    rgbLEDPixel fail = {
+        .red = 0x0F,
+        .green = 0x0F,
+        .blue = 0x00
+    };
+
+    rgbLEDPixel ok = {
         .red = 0x00,
         .green = 0x0F,
         .blue = 0x00
@@ -327,14 +274,34 @@ void Main::setup(void) {
     // Led state to indicate a fatal error.
     ledStates led_fatal_error;
     for(int i = 0; i < LED_IF_NUM_LED; i++) {
-        led_fatal_error.led[i] = red;      
+        led_fatal_error.led[i] = critical_fail;      
     }
+
+    // Bootup messages for display
+    const font &font = Bm437_Acer_VGA_8x8_FON;
+    const char *bootup_title = "BCD-0o27 booting...";
+    const char *bootup_led_msg = "Init LEDs";
+    const char *bootup_display_msg = "Init display";
+    const char *bootup_fs_msg = "Init filesys";
+    const char *bootup_controller_msg = "Init controller";
+    const char *bootup_uart_msg = "Init UART";
+    const char *bootup_wifi_msg = "Init wifi";
+    const char *fail_msg = "FAIL";
+    const char *ok_msg = "  OK";
+
+    // Areas on boot screen
+    rect16 bootup_title_area(0,0,lcd.width, 2 * font.height());
+    rect16 bootup_msg_area(0, bootup_title_area.y2, 
+        lcd.width - font.average_width() * 5, bootup_title_area.y2 + font.height());
+    rect16 bootup_status_area(bootup_msg_area.x2 + font.average_width(), 
+        bootup_msg_area.y1, lcd.width, bootup_msg_area.y2);
 
 
     // 0. Setup LEDs
     //
     // First we try to set up the leds. (We will use the leds to display bootup
     // status.)
+    item_number = 0;
     led_err_t led_error = led.getStatus();
 
     if(led_error != LED_OK) {
@@ -356,7 +323,7 @@ void Main::setup(void) {
         vTaskDelay(pdMS_TO_TICKS(500));  //Give the rmt driver some time TODO - 200ms?
 
         // Now switch first led to green to show successful led setup
-        led_error = led.setLed(0, green);
+        led_error = led.setLed(0, ok);
         vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
 
         if(led_error != LED_OK) {
@@ -370,74 +337,49 @@ void Main::setup(void) {
     // 
     // If the badge supports a display we initialise it here and clear the 
     // screen.
+    item_number++;
     if(!spi_host.initialized()) {
         ESP_LOGE(TAG_DISPLAY, "SPI host initialization error. Halting...\r\n");
         if(hwcap.led) {
+            led_fatal_error.led[item_number] = clear;                           // Clear the led to indicate component
             led.setLeds(led_fatal_error);
         }
-        vTaskDelay(portMAX_DELAY); // TODO - maybe fail with stack trace
+        ESP_ERROR_CHECK(ESP_FAIL);                                              // Fail with stack trace
     } else {
-        if(config_display() != ESP_OK) {
-            ESP_LOGE(TAG_DISPLAY,"Could not configure display...disactivating\r\n");
-            hwcap.display = false;
-            if(hwcap.led) {
-                led.setLed(1, red);
-                vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
-            }
+        
+        hwcap.display = true;
+
+        // Clear the display to remove artifacts that may be in buffer
+        lcd.clear(lcd.bounds());
+
+        // Display a text version of the boot screen
+        //
+        draw::text(lcd, bootup_title_area, bootup_title, font, 
+            lcd_color::steel_blue);
+        draw::text(lcd, bootup_msg_area, bootup_led_msg, font, 
+            lcd_color::steel_blue);
+        if(led_error == LED_OK) {
+            draw::text(lcd, bootup_status_area, ok_msg, font, 
+                lcd_color::green);
         } else {
-            hwcap.display = true;
-
-            // Clear the display to remove artifacts that may be in buffer
-            lcd.clear(lcd.bounds());
-
-            // Display a text version of the boot screen
-            //
-            // TODO do it
-            const font &font = Bm437_Acer_VGA_8x8_FON;
-            const char *bcd_bootscreen = 
-                "12345678901234567890\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "\r\n"
-                "12345678901234567890";
-                draw::text(lcd,
-                lcd.bounds(),
-                bcd_bootscreen,
-                font,
-                lcd_color::steel_blue);  
-
-                if(hwcap.led) {
-                    led.setLed(1, green);
-                    vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
-                }
+            draw::text(lcd, bootup_status_area, fail_msg, font, 
+                lcd_color::yellow);
         }
+        draw::text(lcd, 
+            bootup_msg_area.offset(0,item_number * font.height()), 
+            bootup_display_msg, font, lcd_color::steel_blue);
+        draw::text(lcd, 
+            bootup_status_area.offset(0, item_number * font.height()), 
+            ok_msg, font, lcd_color::green);
 
-        // If the led initialisation failed in the previous step show it on the
-        // display
-        if(led_error != LED_OK) {
-            const font &font = Bm437_Acer_VGA_8x8_FON;
-            const char* text_led_error 
-                = "      WARNING!      \r\n LED setup failure! \r\nFunctionality impact";
-            srect16 text_led_error_rect = font.measure_text((ssize16)lcd.dimensions(),
-                                    text_led_error).bounds();
-            draw::text(lcd,
-                    text_led_error_rect.center((srect16)lcd.bounds()),
-                    text_led_error,
-                    font,
-                    lcd_color::orange_red);
-        } 
-#endif //CONFIG_DISPLAY_SUPPORT
+        // Set the status led of the display to indicate success
+        if(hwcap.led) {
+            led.setLed(item_number, ok);
+            vTaskDelay(pdMS_TO_TICKS(500));                                 //Let us enjoy the led 500ms
+        }
+        
     }
+#endif //CONFIG_DISPLAY_SUPPORT
 
 
     // 2. Setup the filesystems 
@@ -445,6 +387,7 @@ void Main::setup(void) {
     // Second we setup the filesystem to enable the boot screen displaying the
     // logo. As we are on it, we fully initilise all filesystems. Delay is not
     // noticable and doing all here is easier to read the code.
+    item_number++;
 
     // NVS
     //
@@ -453,30 +396,35 @@ void Main::setup(void) {
     // erase NVS (efectively setting the badge back to factory default) and try
     // again. If after this NVS initialisation is not successfull, we fail
     // startup.
+#ifdef CONFIG_DISPLAY_SUPPORT
+    draw::text(lcd, 
+        bootup_msg_area.offset(0,item_number * font.height()), 
+        bootup_fs_msg, font, 
+        lcd_color::steel_blue);
+#endif //CONFIG_DISPLAY_SUPPORT
+
     esp_err_t err = nvs_flash_init();
     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK( nvs_flash_erase() );
         err = nvs_flash_init();
     }
     if(err != ESP_OK) {
-        ESP_LOGE(TAG_FS, "Could not initialise NVS: %d", err);
+        ESP_LOGE(TAG_FS, "Could not initialise NVS: %s (%d)", 
+            esp_err_to_name(err), err);
 #ifdef CONFIG_DISPLAY_SUPPORT
         if(hwcap.display) {
-            const font &font = Bm437_Acer_VGA_8x8_FON;
-            const char* text_nvs_error = "FATAL ERROR\r\nNVS failed!\r\n";
-            srect16 text_nvs_error_rect = font.measure_text((ssize16)lcd.dimensions(),
-                                    text_nvs_error).bounds();
-            draw::text(lcd,
-                    text_nvs_error_rect.center((srect16)lcd.bounds()),
-                    text_nvs_error,
-                    font,
-                    lcd_color::orange_red);  
+            draw::text(lcd, 
+                bootup_status_area.offset(0, item_number * font.height()),
+                fail_msg, 
+                font, 
+                lcd_color::orange_red); 
         }
 #endif //CONFIG_DISPLAY_SUPPORT
-        led.setLeds(led_fatal_error);
-        ESP_ERROR_CHECK(err);                           // Fail if we canot mount nvs.
-
-        //TODO - deep sleep
+        if(hwcap.led) {
+            led_fatal_error.led[item_number] = clear;
+            led.setLeds(led_fatal_error);
+        }
+        ESP_ERROR_CHECK(err);                                                   // Fail if we canot mount nvs.
     }
 
     // SPIFFS
@@ -490,7 +438,7 @@ void Main::setup(void) {
     };         
     esp_err_t fs_error = esp_vfs_spiffs_register(&conf);
     if (fs_error != ESP_OK) {
-        hwcap.fs_spiffs = false;                 // Mark spiffs as not available
+        hwcap.fs_spiffs = false;                                                // Mark spiffs as not available
         switch(fs_error) {
             case ESP_FAIL:
                 ESP_LOGE(TAG_FS, "Failed to mount or format filesystem");
@@ -505,21 +453,14 @@ void Main::setup(void) {
         }
 #ifdef CONFIG_DISPLAY_SUPPORT
         if(hwcap.display) {
-            const font &font = Bm437_Acer_VGA_8x8_FON;
-            const char* text_spiffs_error 
-                = "      WARNING!      \r\n   SPIFFS failure   \r\nFunctionality impact\r\n\r\n";
-            srect16 text_spiffs_error_rect = font.measure_text((ssize16)lcd.dimensions(),
-                                    text_spiffs_error).bounds();
-            draw::text(lcd,
-                    text_spiffs_error_rect.center((srect16)lcd.bounds()),
-                    text_spiffs_error,
-                    font,
-                    lcd_color::yellow);
+            draw::text(lcd, 
+                bootup_status_area.offset(0,item_number * font.height()), 
+                fail_msg, font, lcd_color::yellow);
         }  
 #endif //CONFIG_DISPLAY_SUPPORT
         if(hwcap.led) {
-            led.setLed(2, red);
-            vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
+            led.setLed(item_number, fail);
+            vTaskDelay(pdMS_TO_TICKS(500));                                     //Let us enjoy the led 500ms
         }
     } else {
         size_t total = 0, used = 0;
@@ -527,147 +468,176 @@ void Main::setup(void) {
         if (fs_error != ESP_OK) {
             ESP_LOGE(TAG_FS, "Failed to get SPIFFS partition information");
         } else {
-            ESP_LOGI(TAG_FS, "Partition size: total: %d, used: %d", total, used);
+            ESP_LOGI(TAG_FS, "Partition size: total: %d, used: %d", 
+                total, used);
         }
+#ifdef CONFIG_DISPLAY_SUPPORT
+        if(hwcap.display) {
+            draw::text(lcd, 
+                bootup_status_area.offset(0,item_number * font.height()), 
+                ok_msg, font, lcd_color::green);
+        }  
+#endif //CONFIG_DISPLAY_SUPPORT
         if(hwcap.led) {
-            led.setLed(2, green);
-            vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
+            // Set led to indicate success
+            led.setLed(item_number, ok);
+            vTaskDelay(pdMS_TO_TICKS(500));                                     //Let us enjoy the led 500ms
         }
     }
 
     // 3. Setup controller (push buttons)
-#ifdef CONFIG_INPUT_SUPPORT
-    controller_err_t controller_error = controller.config(); 
-    if(controller_error != CONTROLLER_OK) {
-        ESP_LOGE(TAG_CONTROLLER, "Could not configure embedded controller. Running without support.");
-        hwcap.controller = false;
-
-        if(hwcap.led) {
-            led.setLed(3, red);
-            vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
-        }
-#else //CONFIG_INPUT_SUPPORT
-    hwcap.controller = false;
-#endif //CONFIG_INPUT_SUPPORT
+#ifdef CH405LABS_CONTROLLER_SUPPORT
+    item_number++;
 
 #ifdef CONFIG_DISPLAY_SUPPORT
-        if(hwcap.display) {
-            const font &font = Bm437_Acer_VGA_8x8_FON;
-            const char* text_spiffs_error 
-                = "      WARNING!      \r\n   Controller failure   \r\nFunctionality impact\r\n\r\n";
-            srect16 text_spiffs_error_rect = font.measure_text((ssize16)lcd.dimensions(),
-                                    text_spiffs_error).bounds();
-            draw::text(lcd,
-                    text_spiffs_error_rect.center((srect16)lcd.bounds()),
-                    text_spiffs_error,
-                    font,
-                    lcd_color::yellow);  
-        }
+    draw::text(lcd, 
+        bootup_msg_area.offset(0,item_number * font.height()), 
+        bootup_controller_msg, font, 
+        lcd_color::steel_blue);
 #endif //CONFIG_DISPLAY_SUPPORT
 
-    } else {
+    controller_err_t controller_error = controller.config(); 
+    if(controller_error != CONTROLLER_OK) {
+        ESP_LOGE(TAG_CONTROLLER, "Could not configure embedded controller." 
+            "Running without support.");
+        hwcap.controller = false;
+#ifdef CONFIG_DISPLAY_SUPPORT
+        if(hwcap.display) {
+            draw::text(lcd, bootup_status_area, fail_msg, font, 
+                    lcd_color::yellow);
+        }  
+#endif //CONFIG_DISPLAY_SUPPORT
         if(hwcap.led) {
-            led.setLed(3, green);
+            led.setLed(item_number, fail);
+            vTaskDelay(pdMS_TO_TICKS(500));                                     //Let us enjoy the led 500ms
+        }
+    } else {
+#ifdef CONFIG_DISPLAY_SUPPORT
+        if(hwcap.display) {
+            draw::text(lcd, 
+                bootup_status_area.offset(0,item_number * font.height()), 
+                ok_msg, font, lcd_color::green);
+        }  
+#endif //CONFIG_DISPLAY_SUPPORT
+        if(hwcap.led) {
+            led.setLed(item_number, ok);
             vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
         }
     }
+#else //CH405LABS_CONTROLLER_SUPPORT
+    hwcap.controller = false;
+#endif //CH405LABS_CONTROLLER_SUPPORT
+
 
 
     // 4. Setup UART and the console
     // 
-    // After this, we need to check the led scheduler as theoretically (althoug
-    // rather unlikely) from the console task leds could be used.
+    // TODO After this, we should check the led scheduler as theoretically 
+    // (althoug rather unlikely) from the console task leds could be used.
+    item_number++;
 
-    /* New code not working */
+#ifdef CONFIG_DISPLAY_SUPPORT
+    draw::text(lcd, 
+        bootup_msg_area.offset(0,item_number * font.height()), 
+        bootup_uart_msg, font, 
+        lcd_color::steel_blue);
+#endif //CONFIG_DISPLAY_SUPPORT
+
+    // Try to start the console. If this fails, we retry once again.
     console_err_t console_error = console.start();
     if(console_error != CONSOLE_OK) {
-        ESP_LOGE(TAG_CONSOLE, "Console controller in error state (E:0x%x): Resetting...", console_error);
+        ESP_LOGE(TAG_CONSOLE, "Console controller in error state (E:0x%x):" 
+            "Resetting...", console_error);
         console_error = console.start();
+    } 
+    if(console_error == CONSOLE_OK) {
+        hwcap.console = true;
+#ifdef CONFIG_DISPLAY_SUPPORT
+        if(hwcap.display) {
+            draw::text(lcd, 
+                bootup_status_area.offset(0,item_number * font.height()), 
+                ok_msg, font, lcd_color::green);
+        }  
+#endif //CONFIG_DISPLAY_SUPPORT
+        if(hwcap.led) {
+            led.setLed(item_number, ok);
+            vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
+        }
     } else {
-        // Register WiFi commands
-        console.registerCommand("lsap", &lsap, "List available access points.");
-        console.registerCommand("wificfg", &wificfg, "Configure wifi.");
-        console.registerCommand("apinfo", &apinfo, "Show information about connected access point.");
-        
-        // System commands
-        console.registerCommand("version", &get_version, "Get version of chip and sdk.");
-        console.registerCommand("restart", &restart, "Software reset of the chip.");
-        console.registerCommand("free", &free_mem, "Get currently free heap memory.");
-        console.registerCommand("minheap", &heap_size, "Get minimum size of free heap memory that was available during programm execution.");
-        console.registerCommand("tasks", &tasks_info, "Get information about running tasks.");
-        console.registerCommand("taskstats", &stats_info, "Get statistics about running tasks.");
-        console.registerCommand("intstats", &interval_stats_info, "Get statistics about running tasks during interval.");
-    }
-
-    if(console_error != ESP_OK) {
-    // Something went wrong spawning the console.Disable capability and 
-    // indicate error
-    ESP_LOGW(TAG_CONSOLE, "Failed to initialise uart.");
-    hwcap.console = false;
-
-    if(hwcap.led) {
-        led.setLed(4, red);
-        vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
-    }
+        // Something went wrong spawning the console.Disable capability and 
+        // indicate error
+        ESP_LOGW(TAG_CONSOLE, "Failed to initialise uart.");
+        hwcap.console = false;
 
 #ifdef CONFIG_DISPLAY_SUPPORT
         if(hwcap.display) {
-            const font &font = Bm437_Acer_VGA_8x8_FON;
-            const char* text_spiffs_error 
-                = "      WARNING!      \r\n   Console failure   \r\nFunctionality impact\r\n\r\n";
-            srect16 text_spiffs_error_rect = font.measure_text((ssize16)lcd.dimensions(),
-                                    text_spiffs_error).bounds();
-            draw::text(lcd,
-                    text_spiffs_error_rect.center((srect16)lcd.bounds()),
-                    text_spiffs_error,
-                    font,
-                    lcd_color::yellow);  
-        }
+            draw::text(lcd, 
+                bootup_status_area.offset(0,item_number * font.height()), 
+                fail_msg, font, lcd_color::yellow);
+        }  
 #endif //CONFIG_DISPLAY_SUPPORT
-    } else {
         if(hwcap.led) {
-            led.setLed(4, green);
+            led.setLed(item_number, fail);
             vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
         }
     }
 
     // Start the main event loop
+    //
+    // We start the main loop here, as all the drivers that need the main loop
+    // to not yet be started (or need to be initialised before drivers that 
+    // require the event loop not yet being started are done.)
     esp_event_loop_create_default();
     
     // 5. Initialise WiFi (do not yet connect)
+    //
+    // We prepare the wifi such that it is ready. However, we do not yet connect
+    // even if default credentials are provided.
+    item_number++;
+
+#ifdef CONFIG_DISPLAY_SUPPORT
+    draw::text(lcd, 
+        bootup_msg_area.offset(0,item_number * font.height()), 
+        bootup_wifi_msg, font, 
+        lcd_color::steel_blue);
+#endif //CONFIG_DISPLAY_SUPPORT
+
     Wifi.setSsid(WIFI_SSID);
     Wifi.setPassword(WIFI_PASS);
     if(Wifi.init() != ESP_OK) {
         ESP_LOGE(TAG_WIFI, "Failed to initialise WiFi");
+        hwcap.wlan = false;
 
 #ifdef CONFIG_DISPLAY_SUPPORT
-        const font &font = Bm437_Acer_VGA_8x8_FON;
-        const char* text_spiffs_error 
-            = "      WARNING!      \r\n   WiFi failure   \r\nFunctionality impact\r\n\r\n";
-        srect16 text_spiffs_error_rect = font.measure_text((ssize16)lcd.dimensions(),
-                                text_spiffs_error).bounds();
-        draw::text(lcd,
-                text_spiffs_error_rect.center((srect16)lcd.bounds()),
-                text_spiffs_error,
-                font,
-                lcd_color::yellow);  
+        if(hwcap.display) {
+            draw::text(lcd, 
+                bootup_status_area.offset(0,item_number * font.height()), 
+                fail_msg, font, lcd_color::yellow);
+        }  
 #endif //CONFIG_DISPLAY_SUPPORT
-
-        hwcap.wlan = false;
         if(hwcap.led) {
-            led.setLed(5, red);
-            vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
+            led.setLed(item_number, fail);
+            vTaskDelay(pdMS_TO_TICKS(500));                                     //Let us enjoy the led 500ms
         }
 
     } else {
-        // TODO check if leds are occupied / implement locking mechanism
+        // TODO check if leds are occupied / implement locking mechanism. 
+        // Console task or main loop might use them (unlikely)
+#ifdef CONFIG_DISPLAY_SUPPORT
+        if(hwcap.display) {
+            draw::text(lcd, 
+                bootup_status_area.offset(0,item_number * font.height()), 
+                ok_msg, font, lcd_color::green);
+        }  
+#endif //CONFIG_DISPLAY_SUPPORT
         if(hwcap.led) {
-            led.setLed(5, green);
+            led.setLed(item_number, ok);
             vTaskDelay(pdMS_TO_TICKS(500));  //Let us enjoy the led 500ms
         }
     }
     
-    // Wait to ensure status leds can be read
+    // Give the user some time to read boot screen - if present - and status 
+    // leds.
     vTaskDelay(pdMS_TO_TICKS(1500));
 
 #ifdef CONFIG_DEBUG_STACK
@@ -692,9 +662,6 @@ void app_main(void) {
     // Initialise heap tracing to make it available for use later.
     ESP_ERROR_CHECK( heap_trace_init_standalone(trace_record, NUM_RECORDS) );
 #endif //CONFIG_DEBUG_HEAP
-
-    // TODO - make logging for event loop configurable
-    // esp_log_level_set("event", WIFI_LOG_LEVEL);
 
     App.setup();
     App.run();

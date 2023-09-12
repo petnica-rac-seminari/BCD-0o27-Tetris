@@ -3,13 +3,15 @@
  * @author  Florian Schütz (Grabmoix)
  * @brief   The main header file
  * @version 0.1
- * @date    2022-08-07
+ * @date    12.09.2023
  * 
- * @copyright Copyright (c) 2022 Florian Schütz
+ * @copyright Copyright (c) 2023 Florian Schütz
+ * 
+ * This is an example firmware for the BalcCon Cyberdeck. It illustrates how
+ * some of its functionality can be used. To start a clean project, use the 
+ * framework. Make sure to consult the developer documentations.
  * 
  * TODO:
- *  - define supported hardware to allow for hw with less capabilities 
- *    (eg. #define EMBEDDED_CONTROLLER_SUPPORT)
  *  - ensure all data buffers for transacttion over spi use pvPortMallocCaps(size, MALLOC_CAP_DMA)
  *  - maybe increase SPIRAM_MALLOC_RESERVE_INTERNAL to avoid allocation failure for DMA capable memory
  *  - move transactions that don't use dma and are not time critical to psram
@@ -24,37 +26,44 @@
 #include "esp_system.h"
 #include "esp_spiffs.h"
 #include "nvs_flash.h"
-#include "ch405labs_esp_wifi.hpp"
 #include "esp_vfs_dev.h"
-#include "ch405labs_esp_console.hpp"
 #include <typeinfo>
+#include <fstream>
 
 #ifdef CONFIG_DISPLAY_SUPPORT
 #include "st7735_bcd.hpp"
 #include "gfx.hpp"
-#include "gfx_menu.hpp"
+#include "ch405labs_gfx_menu.hpp"
 #include "../fonts/Bm437_Acer_VGA_8x8.h"
 #include "../fonts/Bm437_ACM_VGA_9x16.h"
 #include "../fonts/Bm437_ATI_9x16.h"
 #endif // CONFIG_DISPLAY_SUPPORT
 
-#include "controller.hpp"
-#include "ch405labs_led.hpp"
-
-#include "modules/mod_party/party.h"
-#include "modules/mod_logoslideshow/logo_slideshow.h"
-#include "modules/mod_demomode/demo_mode.h"
-#include "modules/mod_cyberspace/cyberspace.hpp"
-#include "modules/mod_saodemo/sao_demo.hpp"
-#include "modules/mod_settings/settings.hpp"
-#include "modules/mod_snake/snake.hpp"
-
-#include "helpers/debug.hpp"
-
+#include "ch405labs_esp_controller.hpp"
+#include "ch405labs_esp_led.hpp"
+#include "ch405labs_esp_wifi.hpp"
 #include "ch405labs_esp_console.hpp"
-#include "console_commands/cmd_system.h"
-#include "console_commands/cmd_test.h"
-#include "console_commands/cmd_wifi.hpp"
+#include "ch405labs_esp_debug.h"
+#include "ch405labs_esp_console.hpp"
+
+
+// <----------------------------- Modules ------------------------------------->
+//
+// Add includes for the modules you use here
+#include "mod_bcd_demo.hpp"
+#include "mod_party.hpp"
+#include "mod_logoslideshow.hpp"
+#include "mod_saodemo.hpp"
+#include "mod_settings.hpp"
+#include "mod_snake.hpp"
+#include "mod_cyberspace.hpp"
+
+// <----------------------------- Commands ------------------------------------>
+//
+// Add commands for the modules you use here
+#include "cmd_system.h"
+#include "cmd_test.h"
+#include "cmd_wifi.hpp"
 
 // Namespaces
 #ifdef CONFIG_DISPLAY_SUPPORT
@@ -181,13 +190,15 @@ class Main final {
     private:
         controllerDriver controller;
         ledDriver& led = ledDriver::getInstance();
-        espconsole::consoleController& console = espconsole::consoleController::getInstance();
+        espconsole::consoleController& console 
+            = espconsole::consoleController::getInstance();
         TaskHandle_t cmdTaskHandle;
 
     public:
         void run(void);
         void setup(void);
 
-        espwifi::wifiController::state_e wifiState { espwifi::wifiController::state_e::NOT_INITIALIZED };
+        espwifi::wifiController::state_e wifiState 
+            { espwifi::wifiController::state_e::NOT_INITIALIZED };
         espwifi::wifiController Wifi;
 };

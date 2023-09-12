@@ -1,11 +1,3 @@
-[submodule "firmware/example/lib/gfx"]
-	path = firmware/example/lib/gfx
-	url = https://gitlab.com/fschuetz/gfx
-	branch = main
-[submodule "firmware/example/lib/libssh2"]
-	path = firmware/example/lib/libssh2
-	url = https://gitlab.com/fschuetz/libssh2
-	branch = main
 [submodule "firmware/framework/components/ch405labs_esp_console"]
 	path = firmware/framework/components/ch405labs_esp_console
 	url = https://gitlab.com/ch405labs/ch405labs_esp_console.git
@@ -69,4 +61,100 @@
 [submodule "firmware/framework/commands/cmd_template"]
 	path = firmware/framework/commands/cmd_template
 	url = https://gitlab.com/BCD_0o27/commands/cmd_template.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_esp_libssh2"]
+	path = firmware/example/components/ch405labs_esp_libssh2
+	url = https://gitlab.com/ch405labs/ch405labs_esp_libssh2.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_esp_led"]
+	path = firmware/example/components/ch405labs_esp_led
+	url = https://gitlab.com/ch405labs/ch405labs_esp_led.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_esp_console"]
+	path = firmware/example/components/ch405labs_esp_console
+	url = https://gitlab.com/ch405labs/ch405labs_esp_console.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_esp_controller"]
+	path = firmware/example/components/ch405labs_esp_controller
+	url = https://gitlab.com/ch405labs/ch405labs_esp_controller.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_esp_wifi"]
+	path = firmware/example/components/ch405labs_esp_wifi
+	url = https://gitlab.com/ch405labs/ch405labs_esp_wifi.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_gfx_drivers"]
+	path = firmware/example/components/ch405labs_gfx_drivers
+	url = https://gitlab.com/ch405labs/ch405labs_gfx_drivers.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_gfx_menu"]
+	path = firmware/example/components/ch405labs_gfx_menu
+	url = https://gitlab.com/ch405labs/ch405labs_gfx_menu.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_linenoise"]
+	path = firmware/example/components/ch405labs_linenoise
+	url = https://gitlab.com/ch405labs/ch405labs_linenoise.git
+	branch = main
+[submodule "firmware/example/components/gfx"]
+	path = firmware/example/components/gfx
+	url = https://gitlab.com/htcw_gfx/gfx.git
+	branch = main
+[submodule "firmware/example/components/htcw_data"]
+	path = firmware/example/components/htcw_data
+	url = https://gitlab.com/htcw_gfx/htcw_data.git
+	branch = main
+[submodule "firmware/example/components/htcw_bits"]
+	path = firmware/example/components/htcw_bits
+	url = https://gitlab.com/htcw_gfx/htcw_bits.git
+	branch = main
+[submodule "firmware/example/components/htcw_ml"]
+	path = firmware/example/components/htcw_ml
+	url = https://gitlab.com/htcw_gfx/htcw_ml.git
+	branch = main
+[submodule "firmware/example/components/htcw_io"]
+	path = firmware/example/components/htcw_io
+	url = https://gitlab.com/htcw_gfx/htcw_io.git
+	branch = main
+[submodule "firmware/example/components/ch405labs_esp_debug"]
+	path = firmware/example/components/ch405labs_esp_debug
+	url = https://gitlab.com/ch405labs/ch405labs_esp_debug.git
+	branch = main
+[submodule "firmware/example/modules/mod_cyberspace"]
+	path = firmware/example/modules/mod_cyberspace
+	url = https://gitlab.com/BCD_0o27/modules/mod_cyberspace.git
+	branch = main
+[submodule "firmware/example/modules/mod_bcd_demo"]
+	path = firmware/example/modules/mod_bcd_demo
+	url = https://gitlab.com/BCD_0o27/modules/mod_bcd_demo.git
+	branch = main
+[submodule "firmware/example/modules/mod_logoslideshow"]
+	path = firmware/example/modules/mod_logoslideshow
+	url = https://gitlab.com/BCD_0o27/modules/mod_logoslideshow.git
+	branch = main
+[submodule "firmware/example/modules/mod_party"]
+	path = firmware/example/modules/mod_party
+	url = https://gitlab.com/BCD_0o27/modules/mod_party.git
+	branch = main
+[submodule "firmware/example/modules/mod_saodemo"]
+	path = firmware/example/modules/mod_saodemo
+	url = https://gitlab.com/BCD_0o27/modules/mod_saodemo.git
+	branch = main
+[submodule "firmware/example/modules/mod_settings"]
+	path = firmware/example/modules/mod_settings
+	url = https://gitlab.com/BCD_0o27/modules/mod_settings.git
+	branch = main
+[submodule "firmware/example/modules/mod_snake"]
+	path = firmware/example/modules/mod_snake
+	url = https://gitlab.com/BCD_0o27/modules/mod_snake.git
+	branch = main
+[submodule "firmware/example/commands/cmd_system"]
+	path = firmware/example/commands/cmd_system
+	url = https://gitlab.com/BCD_0o27/commands/cmd_system.git
+	branch = main
+[submodule "firmware/example/commands/cmd_wifi"]
+	path = firmware/example/commands/cmd_wifi
+	url = https://gitlab.com/BCD_0o27/commands/cmd_wifi.git
+	branch = main
+[submodule "firmware/example/commands/cmd_test"]
+	path = firmware/example/commands/cmd_test
+	url = https://gitlab.com/BCD_0o27/commands/cmd_test.git
 	branch = main
