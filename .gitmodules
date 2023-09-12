@@ -14,3 +14,67 @@
 	path = firmware/example/lib/libssh2
 	url = https://gitlab.com/fschuetz/libssh2
 	branch = main
+[submodule "firmware/framework/components/ch405labs_esp_console"]
+	path = firmware/framework/components/ch405labs_esp_console
+	url = https://gitlab.com/ch405labs/ch405labs_esp_console.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_esp_controller"]
+	path = firmware/framework/components/ch405labs_esp_controller
+	url = https://gitlab.com/ch405labs/ch405labs_esp_controller.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_esp_debug"]
+	path = firmware/framework/components/ch405labs_esp_debug
+	url = https://gitlab.com/ch405labs/ch405labs_esp_debug.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_esp_led"]
+	path = firmware/framework/components/ch405labs_esp_led
+	url = https://gitlab.com/ch405labs/ch405labs_esp_led.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_esp_wifi"]
+	path = firmware/framework/components/ch405labs_esp_wifi
+	url = https://gitlab.com/ch405labs/ch405labs_esp_wifi.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_gfx_drivers"]
+	path = firmware/framework/components/ch405labs_gfx_drivers
+	url = https://gitlab.com/ch405labs/ch405labs_gfx_drivers.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_gfx_menu"]
+	path = firmware/framework/components/ch405labs_gfx_menu
+	url = https://gitlab.com/ch405labs/ch405labs_gfx_menu.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_linenoise"]
+	path = firmware/framework/components/ch405labs_linenoise
+	url = https://gitlab.com/ch405labs/ch405labs_linenoise.git
+	branch = main
+[submodule "firmware/framework/components/htcw_bits"]
+	path = firmware/framework/components/htcw_bits
+	url = https://gitlab.com/htcw_gfx/htcw_bits.git
+	branch = main
+[submodule "firmware/framework/components/htcw_data"]
+	path = firmware/framework/components/htcw_data
+	url = https://gitlab.com/htcw_gfx/htcw_data.git
+	branch = main
+[submodule "firmware/framework/components/htcw_io"]
+	path = firmware/framework/components/htcw_io
+	url = https://gitlab.com/htcw_gfx/htcw_io.git
+	branch = main
+[submodule "firmware/framework/components/htcw_ml"]
+	path = firmware/framework/components/htcw_ml
+	url = https://gitlab.com/htcw_gfx/htcw_ml.git
+	branch = main
+[submodule "firmware/framework/components/gfx"]
+	path = firmware/framework/components/gfx
+	url = https://gitlab.com/htcw_gfx/gfx.git
+	branch = main
+[submodule "firmware/framework/components/ch405labs_esp_libssh2"]
+	path = firmware/framework/components/ch405labs_esp_libssh2
+	url = https://gitlab.com/ch405labs/ch405labs_esp_libssh2.git
+	branch = main
+[submodule "firmware/framework/modules/mod_template"]
+	path = firmware/framework/modules/mod_template
+	url = https://gitlab.com/BCD_0o27/modules/mod_template.git
+	branch = main
+[submodule "firmware/framework/commands/cmd_template"]
+	path = firmware/framework/commands/cmd_template
+	url = https://gitlab.com/BCD_0o27/commands/cmd_template.git
+	branch = main
