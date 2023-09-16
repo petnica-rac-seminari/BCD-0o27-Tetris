@@ -14,25 +14,24 @@ void Main::run(void) {
     ESP_LOGD(TAG_STACK, "Main:run(): High watermark for stack at start is: %d", uxHighWaterMark);
 #endif
 
-    
-    // We start a state machine and start in its root state
-    //
-    // At this point we initialised all the peripherals and their drivers. They
-    // are all ready to be used at this point.
-    //
-    // NOTE: To use the framework, add menu items and modules. Of course, you
-    //       can also customize the whole main loop and do not need to use the
-    //       provided one.
-
-
     // --> You might want to put you logic below here. Unless you know what you
     //     are doing, you do not need to change any other code of the framwork
     //     outside this top and the bottom marker. Except of course the modules
     //     you add under ../modules and console commands you add under ../console
     //     and the adaption in the header file for include files.
 
+    
+    // 0 Firmware functionality preparations
+    //
+    // If your firmware uses objects like menus, special symbols or sprites 
+    // etc... this is a good place to set them up.
+    
+    // <--- Set up objects etc... used throughout firmware below -->
 
-    // 0 Register the console commands
+    // <--- Set up objects etc... used throughout firmware above -->
+
+    
+    // 1 Register the console commands
     //
     // First we register the commands for the console. While this can basically
     // be done any time, it does not hurt to make them available early in the 
@@ -48,7 +47,7 @@ void Main::run(void) {
     }
     
 
-    // 1 Register the modules
+    // 2 Register the modules
     //
     // Now is usually a good time to register modules. Normally, modules are 
     // registered in a menu such that they can be selected for execution. In
@@ -61,7 +60,7 @@ void Main::run(void) {
     // <--- Register modules above -->
 
 
-    // 2 Set up phase
+    // 3 Set up phase
     //
     // Everything that needs to be set up or run before moving into the main 
     // loop can be put here.
@@ -71,7 +70,7 @@ void Main::run(void) {
     // <--- Put setup code and one time acitons above -->
 
 
-    // 3 Implement your main loop
+    // 4 Implement your main loop
     //
     // A programm for the cyberdeck should never return. In the main loop you
     // usually process all user input and actions.
