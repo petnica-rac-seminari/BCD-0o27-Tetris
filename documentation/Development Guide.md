@@ -2,7 +2,7 @@ The BalcCon Cyberdeck 0o27 (BCD-0o27) comes with a development framework that ma
 Of course, you can ignore all of that and program the BCD either with esp-idf, rust, or any other framework that allows you to program ESP32 chips directly. However, this is not covered in this guideline.
 
 # Introduction to the BCD-0o27 Framework
-Before reading this chapter it is advisable to get  a local copy of the framework (see [[#Getting the Framework]]) and set up the development environment (see [[#Setting up the Development Toolchain]]). 
+Before reading this chapter it is advisable to get  a local copy of the framework (see [Getting the Framework](#Getting%20the%20Framework) and set up the development environment (see [Setting up the Development Toolchain](#Setting%20up%20the%20Development%20Toolchain)). 
 The framework consists of the following components:
 - **Drivers**: The drivers for the hardware, namely the ST7735 display, the WS2812 LEDs  and the input buttons (aka controller) as well as the serial console. (Sometimes, drivers and libraries are not distinguished)
 - **Libraries / Components**: Libraries and components are provided for common tasks like opening a console on the serial port, establishing ssl connections or displaying graphical elements.
@@ -21,7 +21,7 @@ This document is currently being developed. For the time being, it is recommende
 > There currently is a bug in the serial console that will not give you a prompt when you connect using a serial terminal. In that case, leave the connection open and simply reset the badge by pushing the reset button - left button under the display.
 
 # Firmware Development
-This chapter will explain the code structure for developing firmware. Driver and library interfaces / usage is described in chapter . To develop firmware using the provided framework, you will likely add custom modules and / or console commands. You can either start out with a clean slate by cloning the pure framework or you can start modifying the example firmware. Both can be found in the [gitlab repository](https://gitlab.com/fschuetz/bcd-0o27) Details on how to set up the repository and development environment can be found in the [[#Appendix]].
+This chapter will explain the code structure for developing firmware. Driver and library interfaces / usage is described in chapter [Drivers and Libraries](#Drivers%20and%20Libraries). To develop firmware using the provided framework, you will likely add custom modules and / or console commands. You can either start out with a clean slate by cloning the pure framework or you can start modifying the example firmware. Both can be found in the [gitlab repository](https://gitlab.com/fschuetz/bcd-0o27) Details on how to set up the repository and development environment can be found in the [Appendix](#Appendix).
 If you are eager to get your hands dirty, then feel free to jump right into the example subsection of the according section about modules or commands. The example section will be an easy to follow mini tutorial. Just make sure to revisit the whole section, as the example will not cover everything and not explain why things are done.
 ## Modules
 Modules are "self contained" pieces of code that are usually started through the menu (or execute on their own without user interaction). Modules should be structured as follows:
@@ -60,10 +60,10 @@ idf_component_register( SRC_DIRS "./src"
 						REQUIRES ch405labs_gfx_drivers gfx)
 ```
 ### Using Framework Components (Drivers / Libraries)
-The framework already provides you some special modules (called components) that make it easier for you to develop your own things. See chapter [[#Drivers and Libraries]] on how to include them into your project.
+The framework already provides you some special modules (called components) that make it easier for you to develop your own things. See chapter [Drivers and Libraries](#Drivers%20and%20Libraries) on how to include them into your project.
 ### Example
 In this chapter we will write a little example module from scratch to demonstrate the workflow. All paths used in this example are relative to the home directory. Adapt them to whatever structures you choose. The example as it is presented can be directly applied on a linux or mac computer using a shell of your choice. On windows, some adjustments of eg. path names may be needed.
-Further, this chapter assumes that you have set up the development toolchain properly. If you haven't done so, consult If you have not yet set up Visual Studio Code see [[#Setting up the Development Toolchain]] to set up your development environment first!
+Further, this chapter assumes that you have set up the development toolchain properly. If you haven't done so, consult If you have not yet set up Visual Studio Code see [Setting up the Development Toolchain](#Setting%20up%20the%20Development%20Toolchain) to set up your development environment first!
 
 #### Preparation
 First, we clone the framework (if you haven't done so already). Make sure to also clone the submodules:
@@ -87,8 +87,7 @@ cp -r mod_template/src mod_example
 mv mod_example/include/mod_template.hpp mod_example/include/mod_example.hpp
 mv mod_example/src/mod_template.cpp mod_example/src/mod_example.cpp
 ```
-We now need to adapt the template to fit our module name. For this, open a new window (`File -> New Winow`)in Visual Studio Code. Then open the directory `bcd-0o27/firmware/framework/`. Allow some time for platformio to properly initialise. 
-Check that you can compile the framework by either to the platformio menu (the alien head in your left menu bar) and open the `BCD-0o27-5KY` folder (it may take a while to load). There choose `Build`from the `General` subfolder. If all went well, do the same for `BCD-0o27-5KY-release`.
+We now need to adapt the template to fit our module name. For this, open a new window (`File -> New Window`)in Visual Studio Code. Then open the directory `bcd-0o27/firmware/framework/`. Allow some time for platformio to properly initialise. 
 Next we need to adapt some defines, variables and other elements to reflect the name of our module. We start with the `Kconfig` file. In Visual Studio Code open the `Kconfig` file in the folder `modules/Kconfig`. Then find and replace all `MOD_TEMPLATE` with `MOD_EXAMPLE`.  Also replace the name `Template`in the statement `menu "Console Command: Template"` with `Example`. Alternatively you can issue the following command from the command line in the `modules/mod_example` directory:
 ```bash
 sed -i '' -e 's/MOD_TEMPLATE/MOD_EXAMPLE/g' Kconfig
@@ -321,7 +320,7 @@ First, we need to add our module header file in the includes section of the fram
 ```
 While you are at it, you can also remove the `#include "mod_template.hpp"` as we will not need it, now that we are developing a proper module.
 >[!WARNING]
->Do not add your namespace to the namespaces or you module_main() will clash and lead to compilation errors.
+>Do not add your namespace to the namespaces or your module_main() will clash and lead to compilation errors.
 
 Next open the `src/main.cpp`file. Search for the line that says `// <--- Set up objects etc... used throughout firmware below -->`. Here we will initialise our menu object. To do this add the following code:
 ```cpp
@@ -332,7 +331,7 @@ Now look for the line `// <--- Register modules below -->`. Below this line add 
 ```cpp
 mc.cursor->addEntry(mc.createActionItem("Hello BalcCon", bcd_mod_example::module_main<lcd_type>, &lcd));
 ```
-This registers and action item as the first menu entry. An action item is an item that is executable. In our case, the execution starts in the `module_main(...)` function of our module. For more information about how to build menus consult the chapter [[#GFXMenu]].
+This registers and action item as the first menu entry. An action item is an item that is executable. In our case, the execution starts in the `module_main(...)` function of our module. For more information about how to build menus consult the chapter [GFXMenu](#GFXMenu).
 Las but not least, we need to display our menu and then run a main loop. For this to happen we first add the code to display the menu in the setup section. Look for the line `// <--- Put setup code and one time acitons below -->` and add the following code below:
 ```cpp
 // Reset cursor and select first entry
@@ -385,9 +384,9 @@ for(;;) {
 	vTaskDelay(pdMS_TO_TICKS(250));
 }
 ```
-In our infinite loop, we first capture the pressed keys. Capturing keys records the state of the keys at the very moment this function is called. This is the reason why the last command in the loop is the `vTaskDelay()` command which puts the main task to sleep for 250 milliseconds. The sleep allows the user to release buttons before reading them again. If this command would not be here, the loop would record a pressed button many times and for example scroll through commands very fast. Make sure to read the chapter [[#Controller Driver]] for more information.
+In our infinite loop, we first capture the pressed keys. Capturing keys records the state of the keys at the very moment this function is called. This is the reason why the last command in the loop is the `vTaskDelay()` command which puts the main task to sleep for 250 milliseconds. The sleep allows the user to release buttons before reading them again. If this command would not be here, the loop would record a pressed button many times and for example scroll through commands very fast. Make sure to read the chapter [Controller Driver](#Controller%20Driver) for more information.
 After reading the button presses from the controller, we check if the down button was pressed. If the down button was pressed, we deselect the current menu item, move the cursor one menu item down and select it. We then need to redraw the menu to reflect the change on the display. Note that this does not have any effect in our current state, as we just have one menu item.
-If the down button was not pressed, we check if the up button was pressed. If this is the case, we deselect the current entry, move the cursor one item up an in the menu and select it and then redraw the menu. If neither up nor down were pressed, we finally check if the A or B button was pressed. If this is the case, we check if the active menu item is an action item. This is done by checking the object type of the menu item. If the item is an action item, we execute it and check the return code. If the return code is 0, all is good. If it is smaller than 0, execution failed and we display an error to the console. If the return code is larger than 0 we display a warning that the module returned with a non zero code. After executing, we also need to redraw the menu, as the module may have changed what is displayed on the screen. Make sure to read the chapter [[#GFXMenu]] for more information on how to build an navigate menus.
+If the down button was not pressed, we check if the up button was pressed. If this is the case, we deselect the current entry, move the cursor one item up an in the menu and select it and then redraw the menu. If neither up nor down were pressed, we finally check if the A or B button was pressed. If this is the case, we check if the active menu item is an action item. This is done by checking the object type of the menu item. If the item is an action item, we execute it and check the return code. If the return code is 0, all is good. If it is smaller than 0, execution failed and we display an error to the console. If the return code is larger than 0 we display a warning that the module returned with a non zero code. After executing, we also need to redraw the menu, as the module may have changed what is displayed on the screen. Make sure to read the chapter [GFXMenu](#GFXMenu) for more information on how to build an navigate menus.
 The code above successfully registers our module in a menu that is displayed on the cyberdeck and can be executed. Your can test this by compiling the module and flashing it to your cyberdeck. To do this, select Platformio in the left menu bar (the alien head). Then in the `Project Tasks` open the folder `BCD-0o27-5KY`. Wait for the project to self configure and then choose `General->Build`. If everything compiles fine, attach you cyberdeck to your computer using a USB-C cable and choose `General->Upload`. This flashes the firmware to your cyberdeck. Before doing this, make sure you do not have any serial console open that is connected to your cyberdeck. Otherwise flashing will fail.  
 When you move up and down in the menu or execute the module you will see a short flicker, as neither the module does anything yet nor are there other menu items to scroll through.
 If all of this is working, move on to the next chapter, where we finally implement the functionality of our module.
