@@ -251,6 +251,13 @@ menu "BCD-0o26 Configuration"
             config MAD_BGR
                 bool "BGR"
         endchoice
+
+        config TAG_DISPLAY
+            string "Display tag for logging"
+            default "DISPLAY"
+            help
+                Tag for display log messages.
+            
     endmenu
 
     menu "Input Configuration"
