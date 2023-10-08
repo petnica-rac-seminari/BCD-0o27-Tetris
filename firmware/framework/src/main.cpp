@@ -179,7 +179,7 @@ void Main::setup(void) {
 #ifdef CONFIG_DISPLAY_SUPPORT
 
     // Bootup messages for display
-    const font &font = Bm437_Acer_VGA_8x8_FON;
+    const font &font = bcd_default_font_FON;;
     const char *bootup_title = "BCD-0o27 booting...";
     const char *bootup_led_msg = "Init LEDs";
     const char *bootup_display_msg = "Init display";

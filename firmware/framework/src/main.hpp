@@ -27,7 +27,6 @@
 #include "ch405labs_esp_debug.h"
 #ifdef CONFIG_DISPLAY_SUPPORT
 #include "ch405labs_gfx_menu.hpp"
-#include "../fonts/Bm437_Acer_VGA_8x8.h"
 #endif // CONFIG_DISPLAY_SUPPORT
 
 
