@@ -1,4 +1,4 @@
-#include "../include/hw_capabilities.hpp"
+#include "../include/bcd_system.hpp"
 
 bcd_system bcd_sys;
 

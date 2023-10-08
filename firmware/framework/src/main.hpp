@@ -23,7 +23,7 @@
  *      for DMA capable memory
  *  - move transactions that don't use dma and are not time critical to psram
  */
-#include "hw_capabilities.hpp"
+#include "bcd_system.hpp"
 #include "ch405labs_esp_debug.h"
 #ifdef CONFIG_DISPLAY_SUPPORT
 #include "ch405labs_gfx_menu.hpp"
