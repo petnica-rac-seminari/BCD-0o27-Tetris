@@ -12,6 +12,7 @@
 #ifdef CONFIG_DISPLAY_SUPPORT
 #include "gfx.hpp"
 #include "st7735_bcd.hpp"
+#include "../resources/bcd_default_font.hpp"
 #endif // CONFIG_DISPLAY_SUPPORT
 
 #include "ch405labs_esp_controller.hpp"
