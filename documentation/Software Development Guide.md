@@ -1,4 +1,4 @@
-The BalcCon Cyberdeck 0o27 (BCD-0o27) comes with a development framework that makes it easier to add functionality to the cyberdeck. This development guide introduces the framework, advises coding best practices and provides examples for adding functionality to the BCD.
+The BalCCon Cyberdeck 0o27 (BCD-0o27) comes with a development framework that makes it easier to add functionality to the cyberdeck. This development guide introduces the framework, advises coding best practices and provides examples for adding functionality to the BCD.
 Of course, you can ignore all of that and program the BCD either with esp-idf, rust, or any other framework that allows you to program ESP32 chips directly. However, this is not covered in this guideline.
 
 # Introduction to the BCD-0o27 Framework
@@ -17,7 +17,7 @@ This document is currently being developed. For the time being, it is recommende
 > You can connect to the badge using a serial console and a usb-c data cable. Make sure you use a terminal that understands ansi sequences. You can use the integrated serial monitor of platformio or espressif, but its highly recommended to use syncterm or minicom.
 
 
-> [!warning]
+> [!bug]
 > There currently is a bug in the serial console that will not give you a prompt when you connect using a serial terminal. In that case, leave the connection open and simply reset the badge by pushing the reset button - left button under the display.
 
 # Firmware Development
@@ -70,7 +70,7 @@ First, we clone the framework (if you haven't done so already). Make sure to als
 ```bash
 git clone --recurse-submodules https://gitlab.com/fschuetz/bcd-0o27.git
 ```
-Now it is time to set up an empty git repository of your choice ([github](github.com), [gitlab](gitlab.com) or any other you like). Choose `mod_example` as the name for your module. You can initialise the module with a README.md if you want.
+Now it is time to set up an empty git repository of your choice ([github](github.com), [gitlab](gitlab.com) or any other you like). Choose `mod_example` as the name for your module. You can initialise the module with a `README.md` if you want.
 When done, clone it as a submodule into the `/modules` directory of the framework. Make sure to use the path to your git repository and make sure to clone it such that you can push your changes back to the repository.
 ```bash
 cd bcd-0o27/firmware/framework/modules/
@@ -147,7 +147,7 @@ sed -i '' -e 's/MOD_TEMPLATE/MOD_EXAMPLE/g' include/mod_example.hpp
 Now we are going to edit the mod_example include file to prepare it for writing our program. Open up the file in Visual Studio Code and do the following:
 1. Adjust the information about your module and you the author in the first comment block
    - @author: Your name an email where ppl can reach you for questions.
-   - @brief: A brief description of your module, eg. `Example file for BalcCon Cyberdeck modules.` 
+   - @brief: A brief description of your module, eg. `Example file for BalCCon Cyberdeck modules.` 
    - @version: 0.1
    - @date: The current date
    - @copyright: `Copyright (c) <year>, <your name>, released under MIT license` (or choose another license that suits your purpose better).
@@ -161,12 +161,12 @@ This is all the adaption we need to do at the current stage. Your `mod_example.h
 /**
  * @file mod_example.hpp
  * @author Florian Schütz (fschuetz@ieee.org)
- * @brief Example file for BalcCon Cyberdeck modules.
+ * @brief Example file for BalCCon Cyberdeck modules.
  * @version 1.0
  * @date 12.09.2023
  * @copyright Copyright (c) 2022, Florian Schuetz, released under MIT license
  *
- * `This module display a hello world text on the display and blinks the led's.
+ * This module display a hello world text on the display and blinks the led's.
  * The module will terminate, whenever the user presses a button.
  */ 
 
@@ -220,8 +220,6 @@ typedef BaseType_t mod_example_err_t;
 // Namespaces
 ////////////////////////////////////////////////////////////////////////////////
 // If you "use" namespaces, put them here.
-using namespace espidf;
-using namespace gfx;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Various Types
@@ -235,27 +233,65 @@ namespace bcd_mod_example {
 ////////////////////////////////////////////////////////////////////////////
 // Main function
 ////////////////////////////////////////////////////////////////////////////
-// This is the entry point into our module. It will run a loop that blinks
-// the leds and aborts if a button is pressed long enough`.
+// While not mandatory, it is customary to call the entry point into your
+// module `module_main()`. It must return an integer (0 on success) and
+// has a void * parameter. The void pointer can point to more complex
+// structures, which allow you to pass multiple parameters.
+int module_main(void *param);
 
-template<typename Destination>
+////////////////////////////////////////////////////////////////////////////
+// Function prototypes, classes, ...
+////////////////////////////////////////////////////////////////////////////
+// Put your function prototypes or class definitions etc... here.
 
+} // namespace bcd_mod_example
+#endif // BCD_MOD_EXAMPLE_HPP
+```
+Next we prepare the `src/mod_example.cpp` file. Replace all the `mod_template`stings by `mod_example`. As done before, you can either do this in Visual Studio Code or on the command line:
+```bash
+sed -i '' -e 's/mod_template/mod_example/g' src/mod_example.cpp
+```
+Then copy the first comment block from you `include/mod_example.hpp` and replace the first comment block in `src/mod_example.cpp`. Your file should now look something like this:
+```cpp
+/**
+ * @file mod_example.hpp
+ * @author Florian Schütz (fschuetz@ieee.org)
+ * @brief Example file for BalCCon Cyberdeck modules.
+ * @version 1.0
+ * @date 12.09.2023
+ * @copyright Copyright (c) 2022, Florian Schuetz, released under MIT license
+ *
+ * This module display a hello world text on the display and blinks the led's.
+ * The module will terminate, whenever the user presses a button.
+ */
+
+#include "../include/mod_example.hpp"
+
+namespace bcd_mod_example {
+
+////////////////////////////////////////////////////////////////////////////
+// Main function
+////////////////////////////////////////////////////////////////////////////
+// While not mandatory, it is customary to call the entry point into your
+// module `module_main()`. It must return an integer (0 on success) and
+// has a void * parameter. The void pointer can point to more complex
+// structures, which allow you to pass multiple parameters.
 int module_main(void *param) {
-
+  
 #ifdef CONFIG_DEBUG_STACK
 	UBaseType_t uxHighWaterMark;
+
 	/* Inspect our own high water mark on entering the task. */
 	uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
-		ESP_LOGD(CONFIG_TAG_STACK, "mod_example::module_main(): High watermark "
-		"for stack at start is: %d",
-		uxHighWaterMark);
-#endif
+	ESP_LOGD(CONFIG_TAG_STACK, "mod_example::module_main(): High watermark"
+		" for stack at start is: %d", uxHighWaterMark);
+#endif //CONFIG_DEBUG_STACK
 
 #ifdef CONFIG_DEBUG_HEAP
 	multi_heap_info_t heap_info;
 	heap_caps_get_info(&heap_info, MALLOC_CAP_DEFAULT);
-	ESP_LOGD(CONFIG_TAG_HEAP, "mod_example::module_main(): Heap state at "
-								"start: \n"
+	ESP_LOGD(CONFIG_TAG_HEAP, "mod_example::module_main(): Heap state at"
+								" start: \n"
 								" Free blocks: %d\n"
 								" Allocated blocks: %d\n"
 								" Total blocks: %d\n"
@@ -273,47 +309,30 @@ int module_main(void *param) {
 #endif // CONFIG_DEBUG_HEAP
 
 
-// <--- PLACE CODE BELOW HERE -->
-
+// <--- PLACE CODE BELOW HERE -->  
 
 // <--- PLACE CODE ABOVE HERE -->
 
+
 #ifdef CONFIG_DEBUG_STACK
-	/* Inspect our own high water mark before exiting the task. */
+/* Inspect our own high water mark before exiting the task. */
 	uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
 	ESP_LOGD(CONFIG_TAG_STACK, "mod_example::module_main(): High watermark"
-		" for stack at start "
-		"is: %d", uxHighWaterMark);
+		" for stack at end is: %d", uxHighWaterMark);
 #endif
 
-return 0;
-
+	return 0;
 }
-} // namespace bcd_mod_example
-#endif // BCD_MOD_EXAMPLE_HPP
-```
-Next we prepare the `src/mod_example.cpp` file. Replace all the `mod_template`stings by `mod_example`. As done before, you can either do this in Visual Studio Code or on the command line:
-```bash
-sed -i '' -e 's/mod_template/mod_example/g' src/mod_example.cpp
-```
-Then copy the first comment block from you `include/mod_example.hpp` and replace the first comment block in `src/mod_example.cpp`. Your file should now look something like this:
-```cpp
-/**
- * @file mod_example.hpp
- * @author Florian Schütz (fschuetz@ieee.org)
- * @brief Example file for BalcCon Cyberdeck modules.
- * @version 1.0
- * @date 12.09.2023
- * @copyright Copyright (c) 2022, Florian Schuetz, released under MIT license
- *
- * This module display a hello world text on the display and blinks the led's.
- * The module will terminate, whenever the user presses a button.
- */
 
-#include "../include/mod_example.hpp"
+} // namespace bcd_mod_example
 ```
 #### Adding the Module to the Framework
 While our module does not yet do anything, this is a good time to add it to the framework and check if everything compiles as intended. For our case, our module will be added such that it shows up in the main menu and can be executed by selecting it. 
+
+> [!NOTE] Cleaning before compilation
+> When adding a new module you need to clean the project before compilation in order to enable cmake to recognise the new module. This also applies, if you change the Kconfig file or the CMakeLists file.
+> To clean the project either push the little trashcan icon in the bottom bar or choose the platformio menu on the left (alien head) and then in `Project Tasks`choose `Default->General->Clean all`.
+
 First, we need to add our module header file in the includes section of the framework. For this, open the file `src/main.hpp` from the root directory of your framework. Find the line `// <----------------------------- Modules ------------------------------------->`and add the following after the last `#include` (but before the includes of the commands).
 ```cpp
 #include "mod_example.hpp"
@@ -329,9 +348,10 @@ gfxmenu::MenuController<lcd_type, lcd_type::pixel_type> mc;
 
 Now look for the line `// <--- Register modules below -->`. Below this line add the following code:
 ```cpp
-mc.cursor->addEntry(mc.createActionItem("Hello BalcCon", bcd_mod_example::module_main<lcd_type>, &lcd));
+mc.cursor->addEntry(mc.createActionItem("Hello BalCCon",
+	bcd_mod_example::module_main, NULL));
 ```
-This registers and action item as the first menu entry. An action item is an item that is executable. In our case, the execution starts in the `module_main(...)` function of our module. For more information about how to build menus consult the chapter [GFXMenu](#GFXMenu).
+This registers and action item as the first menu entry. An action item is an item that is executable. In our case, the menu entry is labeled `"Hello BalCCon"`, execution starts in the `module_main(...)` function of our module and we do not pass any arguments. For more information about how to build menus consult the chapter [GFXMenu](#GFXMenu). 
 Las but not least, we need to display our menu and then run a main loop. For this to happen we first add the code to display the menu in the setup section. Look for the line `// <--- Put setup code and one time acitons below -->` and add the following code below:
 ```cpp
 // Reset cursor and select first entry
@@ -368,12 +388,16 @@ for(;;) {
 		
 		const gfxmenu::Entry<lcd_type, lcd_type::pixel_type> *e =
 		mc.cursor->getEntry();
-		if(e != NULL && typeid(*e) == typeid(gfxmenu::ActionItem<lcd_type, lcd_type::pixel_type>)) {
-			int return_code = ((gfxmenu::ActionItem<lcd_type, lcd_type::pixel_type> *)e)->execute();
+		if(e != NULL && typeid(*e) == typeid(gfxmenu::ActionItem<lcd_type, 
+			lcd_type::pixel_type>)) {
+			int return_code = ((gfxmenu::ActionItem<lcd_type, 
+				lcd_type::pixel_type> *)e)->execute();
 			if(return_code < 0) {
-				ESP_LOGE(TAG_STATE, "Could not execute menut item. Code %d", return_code);
+				ESP_LOGE(TAG_STATE, "Could not execute menut item. Code %d",
+					return_code);
 			} else if (return_code > 0) {
-				ESP_LOGW(TAG_STATE,"Menu execution returned with code %d.", return_code);
+				ESP_LOGW(TAG_STATE, "Menu execution returned with code %d.",
+					return_code);
 			};
 			// Need to draw menu again, as execution could have used screen
 			mc.cursor->drawMenu(lcd, srect16(lcd.bounds()),
@@ -387,17 +411,72 @@ for(;;) {
 In our infinite loop, we first capture the pressed keys. Capturing keys records the state of the keys at the very moment this function is called. This is the reason why the last command in the loop is the `vTaskDelay()` command which puts the main task to sleep for 250 milliseconds. The sleep allows the user to release buttons before reading them again. If this command would not be here, the loop would record a pressed button many times and for example scroll through commands very fast. Make sure to read the chapter [Controller Driver](#Controller%20Driver) for more information.
 After reading the button presses from the controller, we check if the down button was pressed. If the down button was pressed, we deselect the current menu item, move the cursor one menu item down and select it. We then need to redraw the menu to reflect the change on the display. Note that this does not have any effect in our current state, as we just have one menu item.
 If the down button was not pressed, we check if the up button was pressed. If this is the case, we deselect the current entry, move the cursor one item up an in the menu and select it and then redraw the menu. If neither up nor down were pressed, we finally check if the A or B button was pressed. If this is the case, we check if the active menu item is an action item. This is done by checking the object type of the menu item. If the item is an action item, we execute it and check the return code. If the return code is 0, all is good. If it is smaller than 0, execution failed and we display an error to the console. If the return code is larger than 0 we display a warning that the module returned with a non zero code. After executing, we also need to redraw the menu, as the module may have changed what is displayed on the screen. Make sure to read the chapter [GFXMenu](#GFXMenu) for more information on how to build an navigate menus.
-The code above successfully registers our module in a menu that is displayed on the cyberdeck and can be executed. Your can test this by compiling the module and flashing it to your cyberdeck. To do this, select Platformio in the left menu bar (the alien head). Then in the `Project Tasks` open the folder `BCD-0o27-5KY`. Wait for the project to self configure and then choose `General->Build`. If everything compiles fine, attach you cyberdeck to your computer using a USB-C cable and choose `General->Upload`. This flashes the firmware to your cyberdeck. Before doing this, make sure you do not have any serial console open that is connected to your cyberdeck. Otherwise flashing will fail.  
+The code above successfully registers our module in a menu that is displayed on the cyberdeck and can be executed. Your can test this by compiling the module and flashing it to your cyberdeck. To do this, select Platformio in the left menu bar (the alien head). Then in the `Project Tasks` open the folder `BCD-0o27-5KY`. Wait for the project to self configure and then first clean the project by choosing `Genreal->Clean All` and then choose `General->Build` to build the project. If everything compiles fine, attach your cyberdeck to your computer using a USB-C cable and choose `General->Upload`. This flashes the firmware to your cyberdeck. Before doing this, make sure you do not have any serial console open that is connected to your cyberdeck. Otherwise flashing will fail.  
 When you move up and down in the menu or execute the module you will see a short flicker, as neither the module does anything yet nor are there other menu items to scroll through.
 If all of this is working, move on to the next chapter, where we finally implement the functionality of our module.
-#### Implementing the Module
-TODO
-#### Implementing the Code
+#### Implementing the Module - Part 1: Hello BalCCon
 >[!INFO] Relative line numbers
->For the rest of this tutorial we are going to reference to line numbers relative to anchor points, because if you used longer descriptions in the preparation chapter, your line numbers culd differ. To enable relative line numbers in Visual Studio Code you can go to `Settings->Settings`. Search for "line numbers" and choose `relative`.
->Alternatively you can just calculate them in your head.
+>For the rest of this tutorial we are going to reference to line numbers relative to anchor points, because if you used longer descriptions in the preparation chapter, your line numbers culd differ. To enable relative line numbers in Visual Studio Code you can go to `Settings->Settings`. Search for "line numbers" and choose `relative`. You can jump to a specific line number pressing `CTRL+G`. 
+>Alternatively you can just calculate the relative line numbers in your head and stick with the default.
 
+For our module, we want to display the message "Hello BalCCon" in the middle of the screen and display the BalCCon logo as a background image. We also want to overlay some lines as an animation and blink the leds.
+Lets start with the easy part, displaying the text all centred. Open `/modules/mod_example/include/mod_example.hpp` (relative to your framework root). From now on, we will no longer provide the full path in this chapter. All paths will be relative to the module root (`/modules/mod_example`). Search for the line `// <--- PLACE CODE BELOW HERE -->`. Then start by writing the following code below:
+```cpp
+#ifdef CONFIG_DISPLAY_SUPPORT
 
+// First check if a display is supported
+//
+// Our module will require a display and will return an error if a display
+// is not supported.
+if(!bcd_sys.displaySupport()) {
+	ESP_LOGE(TAG_MOD_EXAMPLE, "This module requires a working display.");
+	return MOD_EXAMPLE_FAIL;
+}
+
+// Get refferences to display and font
+lcd_type &lcd = bcd_sys.getDisplay();
+const gfx::font& font = bcd_default_font_FON;
+
+// Prepare the text and measure its dimensions.
+const char* hello_balccon_txt = "Hello BalCCon";
+gfx::srect16 hello_balccon_txt_rect =
+	font.measure_text((gfx::ssize16)lcd.dimensions(),hello_balccon_txt).bounds();
+
+//Clear the display and draw the text in the center.
+lcd.clear(lcd.bounds());
+gfx::draw::text(lcd,
+	hello_balccon_txt_rect.center((gfx::srect16)lcd.bounds()),
+	hello_balccon_txt,
+	font,
+	gfx::color<typename lcd_type::pixel_type>::chartreuse);
+
+// Delay for 5 seconds
+vTaskDelay(pdMS_TO_TICKS(5000));
+
+#else //CONFIG_DISPLAY_SUPPORT
+
+ESP_LOGE(TAG_MOD_EXAMPLE, "This module requires display support.");
+return MOD_EXAMPLE_FAIL;
+
+#endif //CONFIG_DISPLAY_SUPPORT
+```
+For referencing line numbers, the first line stating `#ifdef CONFIG_DISPLAY_SUPPORT`is referenced to as line number 1.
+In this code we make some fundamental decisions about our module. The most important one is, that our module should only run on a cyberdeck which has a working display. At the time of writing, all cyberdecks have a display, but in the future, maybe there will be some low power cyberdeck variants without. In the configuration of the firmware display support can be deactivated for cyberdecks without displays (see [Cyberdeck Configuration](#Cyberdeck%20Configuration) for more information). If the configuration is set to no display, then the definition `CONFIG_DISPLAY_SUPPORT` is not present. This allows us to ensure code that uses the display is only compiled if the hardware we compile for actually supports a display. If not, the code size will be significantly smaller. Therefore, all our code that uses display functionality should go in between `#ifdef CONFIG_DISPLAY_SUPPORT ... #endif` preprocessor statements.
+Unfortunately, there is also a second case we need to check. Even if a display is supported its initialisation may have failed during startup. We can test for this querying `bcd_sys.displaySupport()`. If the display works as expected, this function call will return true. 
+As we made the decision that our module will only run if a display is supported and functional, we display and error in case a display is not supported (in the `#else` case of the preprocessor check) or the display is not function (line 7-10) and then return MOD_EXAMPLE_FAIL as an indicator for failure.
+Once we established that we have a working display, on line 13 we get a reference to the display. We will need to pass the display as a parameter to the drawing functions we use. A reference in c++ stores the address of the variable it references. It can be seen as a non-NULL pointer. Syntactically it can be used like regular variables or objects and does not require dereferencing. If you want to know more about c++ references then [Microsoft - References in C++](https://learn.microsoft.com/en-us/cpp/cpp/references-cpp?view=msvc-170) is a good starting point.
+To draw text, we also need a font. The BCD-0o27 comes with a default font. For ease of use we get a reference to this default font. On line 17 we define our text and then on line 18 measure it. This is necessary as when we draw text on the display, we always define a rectangle where to draw to. This can be all of the display, or any part of it. If the text is longer than this rectangle (and the rectangle is high enough to display more lines), the text is automatically wrapped. In our case, we want to make sure to draw to a rectangle just big enough to hold all of the text on one line. The function `font.measure_text(...)`does exactly that. Note, that this function on the one hand will also give you the correct size, in case your text includes line breaks (`\n`) and will also take into account as a parameter the maximum area for your layout (which in our case is the size of the display). If you want to know more about fonts, consult [honey the codewitch gfx - Fonts](https://honeythecodewitch.com/gfx/wiki/fonts.md).
+Finally its time to draw on the display. We first need to clear the display to remove anything that is currently displayed. This is achieved with the function `lcd.clear(...)`. This function takes a rectangle to clear as a parameter. We want to clear the full screen and therefore pass the boundaries of the display as a parameter. Next we draw our text on the screen using the `gfx::draw::text(...)`function. As a first parameter we need to pass a reference to the source to draw to, which in our case here is the lcd. Next we need to define the rectangle to draw into. This rectangle is the size of the text offset in such a way that its center is at the center of the display. This can be achieved using the `.center(...)` function on the rectangle we measured before. This function takes the parent rectangle as a parameter, which in our case is the boundaries of the lcd. The next argument is the actual text to display, the font to use for displaying it and the color in which the text should be displayed. To learn more about colors refer to [honey the codewitch gfx - Pixels / Colors](https://honeythecodewitch.com/gfx/wiki/pixels.md#1.3). 
+After having drawn the text on the display, we simply wait for 5 seconds, until our module terminates successfully.
+Go ahead and compile and upload the framework to your cyberdeck to test you code. To do so, in the left menu choose platformio (the alien head) and then choose `General->Build`. Wait for the build to complete and then choose `General->Upload` with your cyberdeck connected to usb and switched on. Wait for the deck to reboot and you can now see the menu entry for your module on the deck and start it.
+#### Implementing the Module - Part 2: LED blinking
+TODO
+#### Implementing the Module - Part 3: Displaying an Image
+TODO
+#### Implementing the Module - Part 4: Drawing Lines
+TODO
+#### Compiling the Release Version
+TODO
 
 > [!NOTE] Using submodules in your module
 > A note about using submodules in you module: In case your submodule has other submodules, you also need to intitialise those using the `git submodule update --init` command in the directory of your module.
@@ -405,7 +484,7 @@ TODO
 ## Console Commands
 
 
-## Core Configuration
+## Cyberdeck Configuration
 ### Main Stack Size
 TODO - explain stack of main task
 The main task stack size depends heavily on how many modules and commands you use in your custom firmware and how much memory in the main task they require (some modules and commands may spawn own threads with their own stack). If you prepare a firmware, make sure to set the `CONFIG_ESP_MAIN_TASK_STACK_SIZE` in `menuconfig` accordingly. Also, it is recommended to add the appropriate stack size to the `sdkconfig.defaults`. 
@@ -444,6 +523,9 @@ TODO
 TODO
 ## Libraries 
 TODO
+### HTCW GFX
+TODO
+Display routines are provided by the htcw gfx library as templates. This means we need to provide the type of our drawing target (usually the display or a bitmap that we later display) as a parameter. Due to the nature of templates in c++ this means, we want to implement our routines that use gfx also as templates to enable them being used with any drawing target. To learn more about how gfx works please refer to chapter [HTCW GFX](#HTCW%20GFX). If you would like to better understand, why c++ templates need their implementation in the header (and how you could do it differently) this question / answer  [about c++ template implementation on Stackoverflow](https://stackoverflow.com/questions/495021/why-can-templates-only-be-implemented-in-the-header-file) can point you in the right direction.
 ### GFXMenu
 TODO
 ## Components
@@ -522,7 +604,7 @@ Note: The Espressif 32 framework should install automatically when building the 
 ## Misc notes - ignore please
 ### Upload firmware directly
 ```bash
-esptool.py --chip esp32s3 --port "/dev/cu.usbserial-1430" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 16MB 0x0 /Users/fschuetz/Development/balccon_badge_workbench/checked_out_branches/firmware-design/balccon-badge/firmware/BCD-0o26_framework/.pio/build/BCD-0o26-5KY/bootloader.bin 0x8000 /Users/fschuetz/Development/balccon_badge_workbench/checked_out_branches/firmware-design/balccon-badge/firmware/BCD-0o26_framework/.pio/build/BCD-0o26-5KY/partitions.bin 0x10000 .pio/build/BCD-0o26-5KY/firmware.bin
+esptool.py --chip esp32s3 --port "/dev/cu.usbserial-1430" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 16MB 0x0 /Path/to/toplevel/dir/.pio/build/BCD-0o26-5KY/bootloader.bin 0x8000 /Path/to/toplevel/dir/.pio/build/BCD-0o26-5KY/partitions.bin 0x10000 .pio/build/BCD-0o26-5KY/firmware.bin
 ```
 
 
@@ -550,6 +632,9 @@ git pull
 ```
 
 # Coding Style
+TODO - very incomplete
+## Line length
+A line of code should not be longer than 80 characters.
 ```c++
 ESP_LOGE(TAG_MODULE_NAME, "This is a rather long error message."
 		"It should be spred on two lines");
@@ -559,8 +644,23 @@ If functions too long, spread on multiple lines. Two lines, indent second line b
 myfunction_with_many_arguments(
 	argument 1,
 	argument 2,
-	argument 3
-
+	argument 3)
 ```
 
-TO BE CONTINUED
+## Comments
+Comments for single items should either come on a separate line before the item to comment or after the item to comment but indented to character 81 and not longer than 39 characters.
+```cpp
+// Comment for item 1
+item1();
+
+item2();                                               // starts at character 81
+```
+
+## Future Developments
+- [ ] GFX_MENU: Remove using statements from header.
+- [ ] CONSOLE: Fix bug in console: Spawn whether connection present or not. (in sage mode without ansi)
+- [ ] ST7735 Driver: Introduce suspend through buffering bmp
+- [ ] ST7735 Driver: Remodel into proper object that allows getting an instance.
+- [ ] Check compilation without display, led or controller and unify naming scheme
+- [ ] CONSOLE: Redesign such that it can be deactivate (eg. if there is no serial capability)
+- [ ] WIFI: Check if controller needs to be singleton or not (and clean implementation)
