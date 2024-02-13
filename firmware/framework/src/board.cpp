@@ -4,13 +4,25 @@ namespace tetrics_module
 {
 	void board::frame()
 	{
-<<<<<<< HEAD
-		
-=======
 	}
 	void board::clear()
 	{		
->>>>>>> 1934751dccd462bad88425cadca1b2cea1322af4
+	}
+	void board::rotate()
+	{
+	}
+	void board::rotateShape(int matrix[4][4][4])
+	{
+		int x =(currentRotation + 1) % 4;
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				currentShape[i][j] = matrix[x][i][j];
+			}
+			
+		}
+		
 	}
 	void board::moveRight()
 	{
@@ -23,10 +35,6 @@ namespace tetrics_module
 	}
 	int board::getTile(int x, int y)
 	{
-<<<<<<< HEAD
-		return 0;	
-=======
 		return 0;
->>>>>>> 1934751dccd462bad88425cadca1b2cea1322af4
 	}
 }
