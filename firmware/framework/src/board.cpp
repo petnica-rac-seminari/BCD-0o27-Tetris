@@ -30,8 +30,7 @@ namespace tetrics_module
 	} 
 	void board::rotate()
 	{
-		switch (shapeIndex)
-		{
+		switch (shapeIndex){
 		case 0:
 			rotateShape(I_shape);
 			break;
@@ -164,6 +163,23 @@ namespace tetrics_module
 			}
 		}
 		currentShapeY+=1;
+	}
+	void board::checkCollision()
+	{
+		for(int j = height-1; j > 0; j--){
+			int numOfBlocks = 0;
+			for(int i = 0; i < width; i++){
+				if(board[i][j]>0) numOfBlocks++;
+			}
+			if(numOfBlocks == width){
+				for(int k = j; k > 0; k--){
+					for(int i =0; i < width; i++){
+						board[i][k] = board[i][k-1];
+					}
+				}
+				j++;
+			}
+		}
 	}
 	int board::getTile(int x, int y)
 	{

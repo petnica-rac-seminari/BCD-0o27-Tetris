@@ -71,11 +71,11 @@ namespace tetrics_module
 
         void copyMatrix(int source[4][4][4], int destination[4][4], int rotIndex);
         void createShape();
+        void checkCollision();
         int shapeIndex;
         int currentShape[4][4];
         int currentShapeX;
         int currentShapeY;
         int currentShapeColor;
-        int currentRotation;           //has a value of 0, 1, 2 or 3 depending on the rotation of the figure
-    };
+        };
 }
