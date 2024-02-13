@@ -28,6 +28,7 @@
 #ifdef CONFIG_DISPLAY_SUPPORT
 #include "ch405labs_gfx_menu.hpp"
 #endif // CONFIG_DISPLAY_SUPPORT
+#include "board.h"
 
 
 // <----------------------------- Modules ------------------------------------->
@@ -89,7 +90,15 @@ class Main final {
             { espwifi::wifiController::state_e::NOT_INITIALIZED };              /**< WiFi state */
         espwifi::wifiController &Wifi = bcd_sys.getWifiController();            /**< WiFi controller */
 
+        tetrics_module::board board;
+
     public:
         void run(void);                                                         /**< Main loop */
         void setup(void);                                                       /**< Setup / initialisation code */
+
+        void drawBackground();
+        void drawBoard();
+        void drawCurrentScore();
+        void drawTopScore();
+        void drawNextPiece();
 };
