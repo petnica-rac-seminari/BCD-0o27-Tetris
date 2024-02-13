@@ -5,6 +5,9 @@ namespace tetrics_module
 	void board::frame()
 	{
 	}
+	void board::clear()
+	{		
+	}
 	void board::moveRight()
 	{
 	}

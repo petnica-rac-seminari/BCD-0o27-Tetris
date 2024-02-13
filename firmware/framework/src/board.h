@@ -5,6 +5,7 @@ namespace tetrics_module
     {
     public:
         void frame();
+        void clear();
         void moveLeft();
         void moveRight();
         void moveDown();
