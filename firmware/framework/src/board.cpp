@@ -20,6 +20,6 @@ namespace tetrics_module
 	}
 	int board::getTile(int x, int y)
 	{
-		
+		return 0;	
 	}
 }
