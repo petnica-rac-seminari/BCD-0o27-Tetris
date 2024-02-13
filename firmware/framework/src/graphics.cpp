@@ -1,17 +1,16 @@
 #include "main.hpp"
 
-void Main::drawBackground()
+void Main::drawStartScreen()
 {
+    
 }
-void Main::drawBoard()
+
+void Main::drawGameScreen()
 {
+
 }
-void Main::drawCurrentScore()
+
+void Main::drawEndScreen()
 {
-}
-void Main::drawTopScore()
-{
-}
-void Main::drawNextPiece()
-{
+
 }

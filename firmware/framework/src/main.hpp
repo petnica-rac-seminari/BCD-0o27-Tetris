@@ -28,7 +28,10 @@
 #ifdef CONFIG_DISPLAY_SUPPORT
 #include "ch405labs_gfx_menu.hpp"
 #endif // CONFIG_DISPLAY_SUPPORT
+
+
 #include "board.h"
+#include "../fonts/Bm437_Acer_VGA_8x8.h"
 
 
 // <----------------------------- Modules ------------------------------------->
@@ -96,9 +99,7 @@ class Main final {
         void run(void);                                                         /**< Main loop */
         void setup(void);                                                       /**< Setup / initialisation code */
 
-        void drawBackground();
-        void drawBoard();
-        void drawCurrentScore();
-        void drawTopScore();
-        void drawNextPiece();
+        void drawStartScreen();
+        void drawGameScreen();
+        void drawEndScreen();
 };

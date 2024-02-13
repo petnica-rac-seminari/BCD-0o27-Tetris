@@ -77,7 +77,32 @@ void Main::run(void) {
 
 	// <--- Implement your main loop below -->
 	// Make sure your main loop never terminates.
-	
+
+	// 0 - start of game
+	// 1 - in game
+	// 2 - end screen
+	int gameState = 0;
+
+	while (true)
+	{
+		switch(gameState)
+		{
+		case 0:			
+			drawStartScreen();
+			if (controller.getButtonState(BUTTON_A))
+			{
+				gameState = 1;
+				board.clear();
+			}
+			break;
+		case 1:
+			drawGameScreen();
+			break;
+		case 2:
+			drawEndScreen();
+			break;
+		}		
+	}
 	// <--- Implement your main loop above -->
 
 
