@@ -10,5 +10,5 @@ namespace tetrics_module
         void moveDown();
         int getTile(int x, int y);
     private:
-    }
+    };
 }
