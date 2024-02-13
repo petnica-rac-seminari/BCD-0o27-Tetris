@@ -11,11 +11,11 @@ namespace tetrics_module
         void moveLeft();
         void moveRight();
         void moveDown();
+        void makeNewShape();
         int getTile(int x, int y);
         const int width=10;
         const int height=22;
         int board[10][22];
-
     private:
         int currentShape[4][4];
         int currentRotation;           //has a value of 0, 1, 2 or 3 depending on the rotation of the figure
@@ -68,6 +68,12 @@ namespace tetrics_module
                                 {{-1, -1, 0, 0}, {-1, -1, 0, 0}, {0, 0, 0, 0},  {0, 0, 0, 0}},
                                 {{-1, -1, 0, 0}, {-1, -1, 0, 0}, {0, 0, 0, 0},  {0, 0, 0, 0}}
                                 };
+        void createShape();
+        int shapeIndex;
+        int currentShape[4][4];
+        int currentShapeX;
+        int currentShapeY;
+        int currentShapeColor;
 
     };
 }
