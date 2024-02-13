@@ -5,6 +5,7 @@ namespace tetrics_module
     {
     public:
         void frame();
+        void clear();
         void moveLeft();
         void moveRight();
         void moveDown();
@@ -12,6 +13,7 @@ namespace tetrics_module
         const int width=10;
         const int height=22;
         int board[10][22];
+
     private:
     };
 }

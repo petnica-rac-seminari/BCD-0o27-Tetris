@@ -30,6 +30,10 @@
 #endif // CONFIG_DISPLAY_SUPPORT
 
 
+#include "board.h"
+#include "../fonts/Bm437_Acer_VGA_8x8.h"
+
+
 // <----------------------------- Modules ------------------------------------->
 //
 // Add includes for the modules you use here
@@ -89,7 +93,13 @@ class Main final {
             { espwifi::wifiController::state_e::NOT_INITIALIZED };              /**< WiFi state */
         espwifi::wifiController &Wifi = bcd_sys.getWifiController();            /**< WiFi controller */
 
+        tetrics_module::board board;
+
     public:
         void run(void);                                                         /**< Main loop */
         void setup(void);                                                       /**< Setup / initialisation code */
+
+        void drawStartScreen();
+        void drawGameScreen();
+        void drawEndScreen();
 };

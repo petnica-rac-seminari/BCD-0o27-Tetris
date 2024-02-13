@@ -458,6 +458,7 @@ CONFIG_LCD_PIN_RST=15
 CONFIG_LCD_PIN_BCKL=16
 CONFIG_MAD_RGB=y
 # CONFIG_MAD_BGR is not set
+CONFIG_TAG_DISPLAY="DISPLAY"
 # end of Display Configuration
 
 #
@@ -1841,6 +1842,60 @@ CONFIG_WPA_MBEDTLS_TLS_CLIENT=y
 # CONFIG_WPA_11R_SUPPORT is not set
 # CONFIG_WPA_WPS_SOFTAP_REGISTRAR is not set
 # end of Supplicant
+
+#
+# Module: Cyberspace
+#
+# end of Module: Cyberspace
+
+#
+# Module: Snake
+#
+# end of Module: Snake
+
+#
+# CH405Labs Hardware
+#
+
+#
+# CH405Labs Console
+#
+# end of CH405Labs Console
+
+#
+# CH405Labs Controller
+#
+CONFIG_CH405LABS_CONTROLLER_SUPPORT=y
+CONFIG_CH405LABS_CONTROLLER_PIN_DATA=4
+CONFIG_CH405LABS_CONTROLLER_PIN_CLK=6
+CONFIG_CH405LABS_CONTROLLER_PIN_CLE=7
+CONFIG_CH405LABS_CONTROLLER_PIN_LOAD=5
+# end of CH405Labs Controller
+
+#
+# CH405LABS LED Interface
+#
+CONFIG_LED_IF_SUPPORT=y
+# end of CH405LABS LED Interface
+
+#
+# CH405Labs WiFi Configuration
+#
+# end of CH405Labs WiFi Configuration
+
+#
+# CH405Labs GFX Menu
+#
+CONFIG_TAG_CH405LABS_GFX_MENU="GFXMenu"
+CONFIG_CH405LABS_GFX_MENU_LOG_EQUALS_DEFAULT=y
+# CONFIG_CH405LABS_GFX_MENU_LOG_LEVEL_NONE is not set
+# CONFIG_CH405LABS_GFX_MENU_LOG_LEVEL_ERROR is not set
+# CONFIG_CH405LABS_GFX_MENU_LOG_LEVEL_WARN is not set
+# CONFIG_CH405LABS_GFX_MENU_LOG_LEVEL_INFO is not set
+# CONFIG_CH405LABS_GFX_MENU_LOG_LEVEL_DEBUG is not set
+# CONFIG_CH405LABS_GFX_MENU_LOG_LEVEL_VERBOSE is not set
+CONFIG_CH405LABS_GFX_MENU_LOG_LEVEL=2
+# end of CH405Labs GFX Menu
 # end of Component config
 
 # Deprecated options for backward compatibility
