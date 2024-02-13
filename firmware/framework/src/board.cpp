@@ -22,7 +22,7 @@ namespace tetrics_module
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				currentShape[i][j] = matrix[x][i][j];
+				currentShape[i][j] = matrix[x][i][j]*currentShapeColor;
 			}
 			
 		}
@@ -32,25 +32,25 @@ namespace tetrics_module
 	{
 		switch (shapeIndex)
 		{
-		case 1:
+		case 0:
 			rotateShape(I_shape);
 			break;
-		case 2:
+		case 1:
 			rotateShape(L_shape);
 			break;
-		case 3:
+		case 2:
 			rotateShape(J_shape);
 			break;
-		case 4:
+		case 3:
 			rotateShape(Z_shape);
 			break;
-		case 5:
+		case 4:
 			rotateShape(T_shape);
 			break;
-		case 6:
+		case 5:
 			rotateShape(S_shape);
 			break;
-		case 7:
+		case 6:
 			rotateShape(O_shape);
 			break;
 		default:
