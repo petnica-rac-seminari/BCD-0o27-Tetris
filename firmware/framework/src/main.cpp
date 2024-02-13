@@ -1,5 +1,4 @@
 #include "main.hpp"
-#include "board.h"
 
 /****************************************************************
  * Main App
@@ -67,7 +66,7 @@ void Main::run(void) {
 	// loop can be put here.
 	
 	// <--- Put setup code and one time acitons below -->
-	tetrics_module::board board;
+	
 	// <--- Put setup code and one time acitons above -->
 
 
