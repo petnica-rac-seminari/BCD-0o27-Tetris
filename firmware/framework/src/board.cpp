@@ -57,12 +57,43 @@ namespace tetrics_module
 			break;
 		}
 	}
+	void board::copyMatrix(int source[4][4][4], int destination[4][4], int rotIndex)
+	{
+		for(int i = 0; i < 4; i++){
+			for(int j = 0; j < 4; j++){
+				destination[i][j] = source[rotIndex][i][j]*currentShapeColor;
+			}
+		}
+	}
 	void board::createShape()
 	{
-		//treba dodati random biranje i da se zapravo stvori
 		currentShapeX = 0;
 		currentShapeY = 0;
 		currentShapeColor = rand() % 6 + 1;
+		shapeIndex = rand() % 7;
+		switch(shapeIndex){
+			case 0:
+				copyMatrix(I_shape,currentShape,0);
+				break;
+			case 1:
+				copyMatrix(L_shape,currentShape,0);
+				break;
+			case 2:
+				copyMatrix(J_shape,currentShape,0);
+				break;
+			case 3:
+				copyMatrix(Z_shape,currentShape,0);
+				break;
+			case 4:
+				copyMatrix(T_shape,currentShape,0);
+				break;
+			case 5:
+				copyMatrix(S_shape,currentShape,0);
+				break;
+			case 6:
+				copyMatrix(O_shape,currentShape,0);
+				break;
+		}
 	}
 	void board::moveRight()
 	{
@@ -136,6 +167,6 @@ namespace tetrics_module
 	}
 	int board::getTile(int x, int y)
 	{
-		return 0;
+		return 0;	
 	}
 }

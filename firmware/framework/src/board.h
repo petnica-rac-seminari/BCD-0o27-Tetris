@@ -17,6 +17,7 @@ namespace tetrics_module
         const int height=22;
         int board[10][22];
     private:
+        int currentRotation;           //has a value of 0, 1, 2 or 3 depending on the rotation of the figure
         
         int I_shape[4][4][4] ={
                                 {{-1, -1, -1, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
@@ -66,6 +67,9 @@ namespace tetrics_module
                                 {{-1, -1, 0, 0}, {-1, -1, 0, 0}, {0, 0, 0, 0},  {0, 0, 0, 0}},
                                 {{-1, -1, 0, 0}, {-1, -1, 0, 0}, {0, 0, 0, 0},  {0, 0, 0, 0}}
                                 };
+        
+
+        void copyMatrix(int source[4][4][4], int destination[4][4], int rotIndex);
         void createShape();
         int shapeIndex;
         int currentShape[4][4];
