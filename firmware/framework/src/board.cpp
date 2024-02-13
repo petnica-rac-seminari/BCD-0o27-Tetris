@@ -1,0 +1,25 @@
+#include "board.h"
+
+namespace tetrics_module
+{
+	void board::frame()
+	{
+
+	}
+	void board::moveRight()
+	{
+
+	}
+	void board::moveLeft()
+	{
+
+	}
+	void board::moveDown()
+	{
+
+	}
+	int board::getTile(int x, int y)
+	{
+		
+	}
+}
