@@ -15,6 +15,48 @@ namespace tetrics_module
 			}
 		}
 	}
+	void board::rotateShape(int matrix[4][4][4])
+	{
+		int x = (currentRotation + 1) % 4;
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				currentShape[i][j] = matrix[x][i][j];
+			}
+			
+		}
+		
+	} 
+	void board::rotate()
+	{
+		switch (shapeIndex)
+		{
+		case 1:
+			rotateShape(I_shape);
+			break;
+		case 2:
+			rotateShape(L_shape);
+			break;
+		case 3:
+			rotateShape(J_shape);
+			break;
+		case 4:
+			rotateShape(Z_shape);
+			break;
+		case 5:
+			rotateShape(T_shape);
+			break;
+		case 6:
+			rotateShape(S_shape);
+			break;
+		case 7:
+			rotateShape(O_shape);
+			break;
+		default:
+			break;
+		}
+	}
 	void board::createShape()
 	{
 		//treba dodati random biranje i da se zapravo stvori

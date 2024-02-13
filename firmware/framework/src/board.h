@@ -17,8 +17,6 @@ namespace tetrics_module
         const int height=22;
         int board[10][22];
     private:
-        int currentShape[4][4];
-        int currentRotation;           //has a value of 0, 1, 2 or 3 depending on the rotation of the figure
         
         int I_shape[4][4][4] ={
                                 {{-1, -1, -1, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
@@ -74,6 +72,6 @@ namespace tetrics_module
         int currentShapeX;
         int currentShapeY;
         int currentShapeColor;
-
+        int currentRotation;           //has a value of 0, 1, 2 or 3 depending on the rotation of the figure
     };
 }
