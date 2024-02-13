@@ -4,7 +4,7 @@ namespace tetrics_module
 {
 	void board::frame()
 	{
-
+		
 	}
 	void board::moveRight()
 	{
