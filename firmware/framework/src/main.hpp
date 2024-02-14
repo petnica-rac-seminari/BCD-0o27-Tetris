@@ -100,9 +100,9 @@ class Main final {
 
         tetrics_module::board board;
 
-        size16 screenSize = size16(0, 0);
-        bmp_type* screen = nullptr;
-        uint8_t* screenBuffer = nullptr;
+        //size16 screenSize = size16(0, 0);
+        //bmp_type* screen = nullptr;
+        //uint8_t* screenBuffer = nullptr;
         const font& textFont = Bm437_Acer_VGA_8x8_FON;
     public:
         enum class GameState

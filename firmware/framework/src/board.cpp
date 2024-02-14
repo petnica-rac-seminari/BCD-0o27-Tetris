@@ -1,13 +1,22 @@
-#include "board.h"
-#include<cstdlib>
-#include <freertos/portmacro.h>
+
 #include <freertos/mpu_wrappers.h>
+#include<cstdlib>
+#include "board.h"
+#include <freertos/projdefs.h>
 
 namespace tetrics_module
 {
-	void board::frame()
+	void board::frame(TickType_t currtick)
 	{
-		
+		TickType_t downDif = pdMS_TO_TICKS(500);
+		TickType_t checkDif = pdMS_TO_TICKS(250);
+		if(lastTick < currtick-downDif){
+			moveDown();
+			lastTick = currtick;
+		}else if(lastTick < currtick-checkDif){
+			checkCollision();
+		}
+
 	}
 	void board::clear()
 	{		
@@ -19,12 +28,12 @@ namespace tetrics_module
 	}
 	void board::rotateShape(int matrix[4][4][4])
 	{
-		int x = (currentRotation + 1) % 4;
+		currentRotation = (currentRotation + 1) % 4;
 		for (int i = 0; i < 4; i++)
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				currentShape[i][j] = matrix[x][i][j]*currentShapeColor;
+				currentShape[i][j] = matrix[currentRotation][i][j]*currentShapeColor;
 			}
 			
 		}
@@ -98,6 +107,11 @@ namespace tetrics_module
 		for(int i = 0; i < width; i++){
 			for(int j = 0; j < height; j++){
 				if(board[i][j] < 0) board[i][j] = board[i][j]*(-1);
+			}
+		}
+		for(int i = 0; i < 4; i++){
+			for(int j = 0 ; j < 4; j++){
+				board[i][j] = currentShape[i][j];
 			}
 		}
 	}
