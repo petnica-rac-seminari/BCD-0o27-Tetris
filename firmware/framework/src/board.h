@@ -8,7 +8,7 @@ namespace tetrics_module
     {
     public:
         void start();
-        void frame(TickType_t currTick);
+        bool frame(TickType_t currTick);
         void clear();
         void rotateShape(int *matrix);
         void rotate();

@@ -12,7 +12,7 @@ namespace tetrics_module
 		clear();
 		createShape();		
 	}
-	void board::frame(TickType_t currtick)
+	bool board::frame(TickType_t currtick)
 	{
 		TickType_t downDif = pdMS_TO_TICKS(500);
 		TickType_t checkDif = pdMS_TO_TICKS(250);
@@ -20,9 +20,9 @@ namespace tetrics_module
 			moveDown();
 			lastTick = currtick;
 		}else if(lastTick < currtick-checkDif){
-			checkCollision();
+			return checkCollision();
 		}
-
+		return true;
 	}
 	void board::clear()
 	{		
@@ -81,9 +81,9 @@ namespace tetrics_module
 			}
 		}
 	}
-	void board::createShape()
+	bool board::createShape()
 	{
-		currentShapeX = 0;
+		currentShapeX = 3;
 		currentShapeY = 0;
 		currentShapeColor = rand() % 6 + 1;
 		shapeIndex = rand() % 7;
@@ -115,11 +115,13 @@ namespace tetrics_module
 				if(board[i][j] < 0) board[i][j] = board[i][j]*(-1);
 			}
 		}
-		for(int i = 0; i < 4; i++){
+		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = 0 ; j < 4; j++){
-				board[i][j] = currentShape[i][j];
+				if(board[i][j] != 0 && currentShape[i - currentShapeX][j]<0) return false;
+				board[i][j] = currentShape[i - currentShapeX][j];
 			}
 		}
+		return true;
 	}
 	void board::moveRight()
 	{
@@ -191,7 +193,7 @@ namespace tetrics_module
 		}
 		currentShapeY+=1;
 	}
-	void board::checkCollision()
+	bool board::checkCollision()
 	{
 		bool canMove = true;
 		for(int i = currentShapeX; i < currentShapeX+4; i++){
@@ -219,8 +221,9 @@ namespace tetrics_module
 			}
 		}
 		if(!canMove) {
-			createShape();
+			return createShape();
 		}
+		return true;
 	}
 	int board::getTile(int x, int y)
 	{
