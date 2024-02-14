@@ -109,6 +109,11 @@ namespace tetrics_module
 				if(board[i][j] < 0) board[i][j] = board[i][j]*(-1);
 			}
 		}
+		for(int i = 0; i < 4; i++){
+			for(int j = 0 ; j < 4; j++){
+				board[i][j] = currentShape[i][j];
+			}
+		}
 	}
 	void board::moveRight()
 	{
