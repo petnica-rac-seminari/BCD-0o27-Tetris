@@ -143,95 +143,52 @@ namespace tetrics_module
 	}
 	void board::moveRight()
 	{
-		bool canMove = true;
 		for (int i = currentShapeX; i < currentShapeX + 4; i++)
-		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
-			{
 				if (board[i][j] < 0 && (i + 1 >= width || board[i + 1][j] > 0))
-				{
-					canMove = false;
-					break;
-				}
-			}
-			if (!canMove)
-				break;
-		}
-
-		if (!canMove)
-			return;
+					return;
 
 		for (int i = currentShapeX + 3; i >= currentShapeX; i--)
-		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
-			{
-				if (board[i][j] < 0)
+				if (board[i][j] < 0 && i+1<width) 
 				{
 					board[i + 1][j] = board[i][j];
 					board[i][j] = 0;
 				}
-			}
-		}
+
 		currentShapeX += 1;
 	}
 	void board::moveLeft()
 	{
-		bool canMove = true;
 		for (int i = currentShapeX; i < currentShapeX + 4; i++)
-		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
-			{
-				if ((board[i][j] < 0 && i <= 0) || (board[i][j] < 0 && board[i - 1][j] > 0))
-				{
-					canMove = false;
-					goto izadji;
-				}
-			}
-		}
-	izadji:
-		if (!canMove)
-			return;
+				if (board[i][j] < 0 && (i <= 0 || board[i - 1][j] > 0))
+					return;
+				
 		for (int i = currentShapeX; i < currentShapeX + 4; i++)
-		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
-			{
-				if (board[i][j] < 0)
-				{
+				if (i < width && board[i][j] < 0) {
 					board[i - 1][j] = board[i][j];
 					board[i][j] = 0;
 				}
-			}
-		}
 		currentShapeX -= 1;
 	}
 	void board::moveDown()
 	{
 		bool canMove = true;
 		for (int i = currentShapeX; i < currentShapeX + 4; i++)
-		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
-			{
 				if (board[i][j] < 0 && (j + 1 >= height || board[i][j + 1] > 0))
-				{
-					canMove = false;
-					goto izadji;
-				}
-			}
-		}
-	izadji:
-		if (!canMove)
-			return;
+					return;
+
 		for (int j = currentShapeY + 3; j >= currentShapeY; j--)
-		{
 			for (int i = currentShapeX; i < currentShapeX + 4; i++)
-			{
-				if (board[i][j] < 0)
+				if (i < width && board[i][j] < 0)
 				{
 					board[i][j + 1] = board[i][j];
 					board[i][j] = 0;
 				}
-			}
-		}
+			
 		currentShapeY += 1;
 	}
 	bool board::checkCollision()
