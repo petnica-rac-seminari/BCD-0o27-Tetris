@@ -70,6 +70,11 @@ namespace tetrics_module
 		default:
 			break;
 		}
+		for(int i = currentShapeX; i < currentShapeX+3; i++){
+			for(int j = currentShapeY; j < currentShapeY+3;){
+				board[i][j] = currentShape[i-currentShapeX][j-currentShapeY];
+			}
+		}
 	}
 	void board::copyMatrix(int* source, int* destination, int rotIndex)
 	{
@@ -128,7 +133,7 @@ namespace tetrics_module
 		bool canMove = true;
 		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && i+1>=width) || (board[i][j] < 0 && board[i+1][j] > 0)){
+				if((board[i][j] < 0 && i+1==width) || (board[i][j] < 0 && board[i+1][j] > 0)){
 					canMove = false;
 					goto izadji;
 				}
@@ -138,7 +143,7 @@ namespace tetrics_module
 		if(!canMove) return;
 		for(int i = (currentShapeX+3>width-2)?width-2:currentShapeX+3; i >= currentShapeX; i--){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if(board[i][j] < 0){
+				if(board[i][j] < 0 && i < width-1){
 					board[i+1][j] = board[i][j];
 					board[i][j] = 0;
 				}
