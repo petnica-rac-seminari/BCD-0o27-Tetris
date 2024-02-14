@@ -3,34 +3,11 @@
 Main::GameState Main::runStartScreen()
 {
 	GameState exitState = GameState::Running;
-
-	const char *start_text = "Start\r\n";
-	srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds());
-	const char *exit_text = "Exit\r\n";
-	srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height());
-
-<<<<<<< HEAD
-	int selectedButton = 0;
-	auto renderScene = [&]()
-	{
-		draw::filled_ellipse(lcd, rect16(point16(10, 10), lcd.dimensions().inflate(-20, -20)), color<pixel_type>::red);
-
-		drawJPEG("/a.jpeg", point16(0, 0));
-
-		draw::text(lcd, start_text_rect, start_text, textFont, color<pixel_type>::white);
-		draw::text(lcd, exit_text_rect, exit_text, textFont, color<pixel_type>::white);
-
-		switch (selectedButton)
-		{
-		case 0:
-		{
-			point16 pos = point16(start_text_rect.x1, (start_text_rect.y1 + start_text_rect.y2) / 2).offset(-20, -5);
-			draw::filled_ellipse(lcd, rect16(pos, size16(6, 6)), color<pixel_type>::white);
-=======
+	
 	const char* start_text = "Start";
     srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds()).offset(0, -3);
 	const char* exit_text = "Exit";
-    srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, 2);
+    srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height() + 2);
 	
 	//draw::filled_ellipse(lcd, rect16(point16(10, 10), lcd.dimensions().inflate(-20, -20)), color<pixel_type>::red);	
 	//drawJPEG("/a.jpeg", point16(0, 0));
@@ -52,7 +29,6 @@ Main::GameState Main::runStartScreen()
 		case 0: {
 			lcd.clear(exitDot);
 			draw::filled_ellipse(lcd, startDot, color<pixel_type>::white);
->>>>>>> 9f34c6b0729a1f9788c3cc327d59276bd1e9170b
 			break;
 		}
 		case 1:
@@ -94,6 +70,7 @@ Main::GameState Main::runStartScreen()
 				break;
 			case 1:
 				exitState = GameState::Exit;
+				break;
 			}
 
 			break;
@@ -109,23 +86,26 @@ Main::GameState Main::runGameScreen()
 {
 	const char* TETRIS_text = "TETRIS";
     srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
-	const char* exitInfo_text = "Click <BACK> to exit game";
-    srect16 exitInfo_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exitInfo_text).bounds();
-	exitInfo_text_rect.y1 = 120;
-	exitInfo_text_rect.y2 = 128;
+	//const char* exitInfo_text = "Click <BACK> to exit game";
+    //srect16 exitInfo_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exitInfo_text).bounds();
+	//exitInfo_text_rect.y1 = 120;
+	//exitInfo_text_rect.y2 = 128;
 
 	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
-	draw::text(lcd, exitInfo_text_rect, exitInfo_text, textFont, color<pixel_type>::white);
+	//draw::text(lcd, exitInfo_text_rect, exitInfo_text, textFont, color<pixel_type>::white);
+
+	board.start();
 
 	while (true)
 	{
-<<<<<<< HEAD
 		// cistimo ekran
-		lcd.clear(lcd.bounds());
+		//lcd.clear(lcd.bounds());
 
 		// tetrics_module::board gameBoard;
 		int width = board.width;
 		int height = board.height;
+
+		board.clear();
 
 		// petlja prolazi kroz matricu
 		for (int i = 0; i < width; ++i)
@@ -174,10 +154,8 @@ Main::GameState Main::runGameScreen()
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
 		}
-=======
 		TickType_t tick = xTaskGetTickCount();
 		board.frame(tick);
->>>>>>> 9f34c6b0729a1f9788c3cc327d59276bd1e9170b
 	}
 
 	return GameState::Start;
@@ -185,7 +163,7 @@ Main::GameState Main::runGameScreen()
 
 Main::GameState Main::runEndScreen()
 {
-	GameState exitState = GameState::Running;		
+	GameState exitState = GameState::Running;
 
 	const char* play_again_text = "Play again\r\n";
     srect16 play_again_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), play_again_text).bounds().center((srect16)lcd.bounds()).offset(0, -3);

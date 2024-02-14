@@ -1,31 +1,32 @@
 #include <FreeRTOSConfig.h>
 #include <freertos/portmacro.h>
 #include <freertos/projdefs.h>
+#include <array>
 namespace tetrics_module
 {
     class board
     {
-    public:
+    public:    
+        void start();
         void frame(TickType_t currTick);
         void clear();
-        void rotateShape(int matrix[4][4][4]);
+        void rotateShape(int*** matrix);
         void rotate();
         void moveLeft();
         void moveRight();
-        void moveDown();
-        void makeNewShape();
+        void moveDown();        
         int getTile(int x, int y);
         const int width=10;
         const int height=22;
-        int board[10][22];
+        std::array<std::array<int, 22>, 10> board = { };
     private:
         int currentRotation;           //has a value of 0, 1, 2 or 3 depending on the rotation of the figure
         
-        int I_shape[4][4][4] ={
-                                {{-1, -1, -1, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
-                                {{-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}},
-                                {{-1, -1, -1, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
-                                {{-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}},
+       int I_shape[4][4][4] ={
+                                { {-1, -1, -1, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
+                                { {-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}},
+                                { {-1, -1, -1, -1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
+                                { {-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}, {-1, 0, 0, 0}},
                                 };
 
         int L_shape[4][4][4] = {
@@ -55,7 +56,7 @@ namespace tetrics_module
                                 {{0, -1, 0, 0}, {-1, -1, -1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
                                 {{-1, 0, 0, 0}, {-1, -1, 0, 0}, {-1, 0, 0, 0},  {0, 0, 0, 0}}
                                 };
-
+    
         int S_shape[4][4][4] = {
                                 {{0, -1, -1, 0,}, {-1, -1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},
                                 {{-1, 0, 0, 0}, {-1, -1, 0, 0}, {0, -1, 0, 0}, {0, 0, 0, 0}},
@@ -71,11 +72,11 @@ namespace tetrics_module
                                 };
         
         TickType_t lastTick = 0;
-        void copyMatrix(int source[4][4][4], int destination[4][4], int rotIndex);
+        void copyMatrix(int*** source, int** destination, int rotIndex);
         void createShape();
         void checkCollision();
         int shapeIndex;
-        int currentShape[4][4];
+        std::array<std::array<int, 4>, 4> currentShape;
         int currentShapeX;
         int currentShapeY;
         int currentShapeColor;
