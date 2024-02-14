@@ -1,13 +1,22 @@
-#include "board.h"
-#include<cstdlib>
-#include <freertos/portmacro.h>
+
 #include <freertos/mpu_wrappers.h>
+#include<cstdlib>
+#include "board.h"
+#include <freertos/projdefs.h>
 
 namespace tetrics_module
 {
-	void board::frame()
+	void board::frame(TickType_t currtick)
 	{
-		
+		TickType_t downDif = pdMS_TO_TICKS(500);
+		TickType_t checkDif = pdMS_TO_TICKS(250);
+		if(lastTick < currtick-downDif){
+			moveDown();
+			lastTick = currtick;
+		}else if(lastTick < currtick-checkDif){
+			checkCollision();
+		}
+
 	}
 	void board::clear()
 	{		

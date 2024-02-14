@@ -77,7 +77,8 @@ Main::GameState Main::runGameScreen()
 {
 	while (true)
 	{
-		board.frame();
+		TickType_t tick = xTaskGetTickCount();
+		board.frame(tick);
 	}
 
 	return GameState::Start;
