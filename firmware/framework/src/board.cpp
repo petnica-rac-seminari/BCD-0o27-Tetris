@@ -12,7 +12,7 @@ namespace tetrics_module
 		clear();
 		createShape();		
 	}
-	void board::frame(TickType_t currtick)
+	bool board::frame(TickType_t currtick)
 	{
 		TickType_t downDif = pdMS_TO_TICKS(500);
 		TickType_t checkDif = pdMS_TO_TICKS(250);
