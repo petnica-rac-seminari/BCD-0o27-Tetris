@@ -19,8 +19,8 @@ Main::GameState Main::runStartScreen()
 	int selectedButton = 0;
 	auto renderScene = [&]()
 	{
-		rect16 startDot = rect16(point16(start_text_rect.left(), (start_text_rect.y1 + start_text_rect.y2) / 2).offset(-10, -6), size16(6, 6));
-		rect16 exitDot = rect16(point16(exit_text_rect.left(), (exit_text_rect.y1 + exit_text_rect.y2) / 2).offset(-10, -6), size16(6, 6));
+		rect16 startDot = rect16(point16(start_text_rect.left(), (start_text_rect.y1 + start_text_rect.y2) / 2).offset(-10, -3), size16(6, 6));
+		rect16 exitDot = rect16(point16(exit_text_rect.left(), (exit_text_rect.y1 + exit_text_rect.y2) / 2).offset(-10, -3), size16(6, 6));
 		switch (selectedButton)
 		{
 		case 0:
@@ -59,7 +59,7 @@ Main::GameState Main::runStartScreen()
 			}
 		}
 
-		if (controller.getButtonState(BUTTON_A))
+		if (controller.getButtonState(BUTTON_A) || controller.getButtonState(BUTTON_B))
 		{
 			switch (selectedButton)
 			{
@@ -94,6 +94,10 @@ Main::GameState Main::runGameScreen()
 		controller.clear();
 		controller.capture();
 
+		if (controller.getButtonState(BUTTON_X) || controller.getButtonState(BUTTON_Y))
+		{
+			return GameState::Start;
+		}
 		if (controller.getButtonState(BUTTON_LEFT))
 		{
 			board.moveLeft();
@@ -101,6 +105,14 @@ Main::GameState Main::runGameScreen()
 		if (controller.getButtonState(BUTTON_RIGHT))
 		{
 			board.moveRight();
+		}
+		if (controller.getButtonState(BUTTON_DOWN))
+		{
+			board.moveDown();
+		}
+		if (controller.getButtonState(BUTTON_A) || controller.getButtonState(BUTTON_B))
+		{
+			board.rotate();
 		}
 
 		TickType_t tick = xTaskGetTickCount();
