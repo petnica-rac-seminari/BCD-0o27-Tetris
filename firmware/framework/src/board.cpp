@@ -78,16 +78,18 @@ namespace tetrics_module
 			break;
 		}
 
-		for(int i = currentShapeX; i < currentShapeX+3; i++){
-			for(int j = currentShapeY; j < currentShapeY+3; j++){
+		for(int i = currentShapeX; i < currentShapeX+4; i++){
+			for(int j = currentShapeY; j < currentShapeY+4; j++){
 				if(board[i][j] > 0 && currentShape[i-currentShapeX][j-currentShapeY] < 0){
 					currentShape = lastShape;
+					currentRotation = (currentRotation+3)%4;
 					return;
 				}
 			}
 		}
-		for(int i = currentShapeX; i < currentShapeX+3; i++){
-			for(int j = currentShapeY; j < currentShapeY+3; j++){
+		
+		for(int i = currentShapeX; i < currentShapeX+4; i++){
+			for(int j = currentShapeY; j < currentShapeY+4; j++){
 				board[i][j] = currentShape[i-currentShapeX][j-currentShapeY];
 			}
 		}
