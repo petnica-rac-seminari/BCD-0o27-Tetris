@@ -76,6 +76,13 @@ namespace tetrics_module
 		default:
 			break;
 		}
+		for (int i = currentShapeX; i < currentShapeX + 3; i++)
+		{
+			for (int j = currentShapeY; j < currentShapeY + 3;)
+			{
+				board[i][j] = currentShape[i - currentShapeX][j - currentShapeY];
+			}
+		}
 	}
 	void board::copyMatrix(int *source, int *destination, int rotIndex)
 	{
@@ -143,20 +150,21 @@ namespace tetrics_module
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
-				if ((board[i][j] < 0 && i + 1 >= width) || (board[i][j] < 0 && board[i + 1][j] > 0))
+				if (board[i][j] < 0 && (i + 1 >= width || board[i + 1][j] > 0))
 				{
 					canMove = false;
-					goto izadji;
+					break;
 				}
 			}
+			if (!canMove)
+				break;
 		}
-	izadji:
+
 		if (!canMove)
 			return;
+
 		for (int i = currentShapeX + 3; i >= currentShapeX; i--)
 		{
-			if (i + 1 >= width)
-				continue;
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
 				if (board[i][j] < 0)
@@ -175,7 +183,7 @@ namespace tetrics_module
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
-				if ((board[i][j] < 0 && i == 0) || (board[i][j] < 0 && board[i - 1][j] > 0))
+				if ((board[i][j] < 0 && i <= 0) || (board[i][j] < 0 && board[i - 1][j] > 0))
 				{
 					canMove = false;
 					goto izadji;
@@ -185,7 +193,7 @@ namespace tetrics_module
 	izadji:
 		if (!canMove)
 			return;
-		for (int i = 0; i < currentShapeX + 4; i++)
+		for (int i = currentShapeX; i < currentShapeX + 4; i++)
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
@@ -205,7 +213,7 @@ namespace tetrics_module
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
-				if ((board[i][j] < 0 && j + 1 == height) || (board[i][j] < 0 && board[i][j + 1] > 0))
+				if (board[i][j] < 0 && (j + 1 >= height || board[i][j + 1] > 0))
 				{
 					canMove = false;
 					goto izadji;
@@ -217,7 +225,7 @@ namespace tetrics_module
 			return;
 		for (int j = currentShapeY + 3; j >= currentShapeY; j--)
 		{
-			for (int i = 0; i < currentShapeX + 4; i++)
+			for (int i = currentShapeX; i < currentShapeX + 4; i++)
 			{
 				if (board[i][j] < 0)
 				{
