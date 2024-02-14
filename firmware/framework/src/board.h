@@ -8,7 +8,7 @@ namespace tetrics_module
     {
     public:    
         void start();
-        void frame(TickType_t currTick);
+        bool frame(TickType_t currTick);
         void clear();
         void rotateShape(int* matrix);
         void rotate();
@@ -73,8 +73,8 @@ namespace tetrics_module
         
         TickType_t lastTick = 0;
         void copyMatrix(int* source, int* destination, int rotIndex);
-        void createShape();
-        void checkCollision();
+        bool createShape();
+        bool checkCollision();
         int shapeIndex;
         std::array<std::array<int, 4>, 4> currentShape;
         int currentShapeX;
