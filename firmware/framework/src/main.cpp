@@ -81,6 +81,7 @@ void Main::run(void) {
 	// 0 - start of game
 	// 1 - in game
 	// 2 - end screen
+	ESP_LOGE(TAG_FS, "propas");
 	int gameState = 0;
 
 	while (true)

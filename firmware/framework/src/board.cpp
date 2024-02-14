@@ -1,5 +1,7 @@
 #include "board.h"
 #include<cstdlib>
+#include <freertos/portmacro.h>
+#include <freertos/mpu_wrappers.h>
 
 namespace tetrics_module
 {
@@ -93,6 +95,11 @@ namespace tetrics_module
 				copyMatrix(O_shape,currentShape,0);
 				break;
 		}
+		for(int i = 0; i < width; i++){
+			for(int j = 0; j < height; j++){
+				if(board[i][j] < 0) board[i][j] = board[i][j]*(-1);
+			}
+		}
 	}
 	void board::moveRight()
 	{
@@ -166,6 +173,13 @@ namespace tetrics_module
 	}
 	void board::checkCollision()
 	{
+		bool canMove = true;
+		for(int i = currentShapeX; i < currentShapeX+4; i++){
+			for(int j = currentShapeY; j < currentShapeY+4; j++){
+				if((board[i][j] < 0 && j+1 == height) || (board[i][j] < 0 && board[i][j+1] > 0))
+					canMove = false;
+			}
+		}
 		for(int j = height-1; j > 0; j--){
 			int numOfBlocks = 0;
 			for(int i = 0; i < width; i++){
@@ -174,11 +188,18 @@ namespace tetrics_module
 			if(numOfBlocks == width){
 				for(int k = j; k > 0; k--){
 					for(int i =0; i < width; i++){
-						board[i][k] = board[i][k-1];
+						if(board[i][k-1] >= 0)
+							board[i][k] = board[i][k-1];
+						else if(k == j){
+							board[i][k] = 0;
+						}
 					}
 				}
 				j++;
 			}
+		}
+		if(!canMove) {
+			createShape();
 		}
 	}
 	int board::getTile(int x, int y)
