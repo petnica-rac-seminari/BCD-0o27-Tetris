@@ -50,6 +50,7 @@ namespace tetrics_module
 	}
 	void board::rotate()
 	{
+		std::array<std::array<int, 4>, 4> lastShape = currentShape;
 		switch (shapeIndex)
 		{
 		case 0:
@@ -75,6 +76,15 @@ namespace tetrics_module
 			break;
 		default:
 			break;
+		}
+
+		for(int i = currentShapeX; i < currentShapeX+3; i++){
+			for(int j = currentShapeY; j < currentShapeY+3; j++){
+				if(board[i][j] > 0 && currentShape[i-currentShapeX][j-currentShapeY] < 0){
+					currentShape = lastShape;
+					return;
+				}
+			}
 		}
 		for(int i = currentShapeX; i < currentShapeX+3; i++){
 			for(int j = currentShapeY; j < currentShapeY+3; j++){
