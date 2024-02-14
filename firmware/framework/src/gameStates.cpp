@@ -93,6 +93,22 @@ Main::GameState Main::runGameScreen()
 	{
 		controller.clear();
 		controller.capture();
+
+		if (controller.getButtonState(BUTTON_LEFT))
+		{
+			board.moveLeft();
+		}
+		if (controller.getButtonState(BUTTON_RIGHT))
+		{
+			board.moveRight();
+		}
+
+		TickType_t tick = xTaskGetTickCount();
+		if (!board.frame(tick))
+		{
+			ESP_LOGE(TAG_FS, "IZGUBIO/LA SI");
+		}
+
 		// tetrics_module::board gameBoard;
 		int width = board.width;
 		int height = board.height;
@@ -144,9 +160,6 @@ Main::GameState Main::runGameScreen()
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
 		}
-		
-		TickType_t tick = xTaskGetTickCount();
-		board.frame(tick);
 	}
 
 	return GameState::Start;
