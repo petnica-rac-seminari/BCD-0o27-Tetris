@@ -68,24 +68,24 @@ void Main::run(void) {
 	// <--- Put setup code and one time acitons below -->	
 
 	
-	screenSize = lcd.dimensions();
-    screenBuffer = (uint8_t *)malloc(bmp_type::sizeof_buffer(screenSize)*sizeof(uint8_t));
-
-    if(screenBuffer == nullptr)
-        ESP_LOGW("Tetris", "Not buffering display: Not enough free memory.");
-    else 
-	{
-        screen = (bmp_type *)malloc(sizeof(bmp_type));
-
-        if(screen == nullptr) 
-		{
-            ESP_LOGW("Tetris", "Not buffering display: Not enough free memory.");
-            free(screenBuffer);
-            screenBuffer = nullptr;
-        } 
-		else 		
-            screen = new (screen) bmp_type(screenSize, screenBuffer);
-    }
+	//screenSize = lcd.dimensions();
+    //screenBuffer = (uint8_t *)malloc(bmp_type::sizeof_buffer(screenSize)*sizeof(uint8_t));
+	//
+    //if(screenBuffer == nullptr)
+    //    ESP_LOGW("Tetris", "Not buffering display: Not enough free memory.");
+    //else 
+	//{
+    //    screen = (bmp_type *)malloc(sizeof(bmp_type));
+	//
+    //    if(screen == nullptr) 
+	//	{
+    //        ESP_LOGW("Tetris", "Not buffering display: Not enough free memory.");
+    //        free(screenBuffer);
+    //        screenBuffer = nullptr;
+    //    } 
+	//	else 		
+    //        screen = new (screen) bmp_type(screenSize, screenBuffer);
+    //}
 	
 
 	// --- Put setup code and one time acitons above -->
@@ -106,12 +106,15 @@ void Main::run(void) {
 		switch(gameState)
 		{
 		case GameState::Start:
+			ESP_LOGD(TAG_FS, "Start screen");
 			gameState = runStartScreen();
 			break;
 		case GameState::Running:
+		ESP_LOGD(TAG_FS, "Running screen");
 			gameState = runGameScreen();
 			break;
 		case GameState::End:
+		ESP_LOGD(TAG_FS, "End screen");
 			gameState = runEndScreen();
 			break;
 		case GameState::Exit:
@@ -124,6 +127,7 @@ void Main::run(void) {
 	// --> You might want to ensure your code is complete above this line and the code
 	//     below this line is never reached, unless you know what you are doing.
 
+	ESP_LOGD(TAG_FS, "Exiting app");
 
 
 	// Guard
