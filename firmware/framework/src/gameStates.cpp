@@ -77,7 +77,7 @@ Main::GameState Main::runGameScreen()
 {
 	while (true)
 	{
-		board.frame()
+		board.frame();
 	}
 
 	return GameState::Start;
