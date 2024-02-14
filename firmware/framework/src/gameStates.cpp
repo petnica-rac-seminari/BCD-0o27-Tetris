@@ -167,7 +167,7 @@ Main::GameState Main::runGameScreen()
 					}
 				}
 				// kreiramo polje
-				rect16 rectangle(point16(i * 2, j * 2), size16(2, 2));
+				rect16 rectangle(point16(i * 5, j * 5), size16(5, 5));
 				// iscrtavamo polje
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
