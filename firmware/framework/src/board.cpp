@@ -117,8 +117,8 @@ namespace tetrics_module
 		}
 		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = 0 ; j < 4; j++){
-				if(board[i][j] != 0 && currentShape[i][j]<0) return false;
-				board[i][j] = currentShape[i][j];
+				if(board[i][j] != 0 && currentShape[i - currentShapeX][j]<0) return false;
+				board[i][j] = currentShape[i - currentShapeX][j];
 			}
 		}
 		return true;
