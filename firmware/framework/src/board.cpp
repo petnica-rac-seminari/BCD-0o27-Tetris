@@ -136,8 +136,7 @@ namespace tetrics_module
 		}
 		izadji:
 		if(!canMove) return;
-		for(int i = currentShapeX+3; i >= currentShapeX; i--){
-			if(i >= width) continue;
+		for(int i = (currentShapeX+3>width-2)?width-2:currentShapeX+3; i >= currentShapeX; i--){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
 				if(board[i][j] < 0){
 					board[i+1][j] = board[i][j];
