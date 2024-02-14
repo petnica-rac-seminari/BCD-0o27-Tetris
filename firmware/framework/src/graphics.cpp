@@ -1,4 +1,4 @@
-#include "main.hpp"
+/*#include "main.hpp"
 
 void Main::drawStartScreen()
 {
@@ -13,4 +13,4 @@ void Main::drawGameScreen()
 void Main::drawEndScreen()
 {
     // draw::image("end_screen.png", 0, 0);
-}
+}*/
