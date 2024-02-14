@@ -2,40 +2,7 @@
 
 Main::GameState Main::runStartScreen()
 {
-	GameState exitState = GameState::Running;	
-	
-	ledPattern lp1, lp2;
-
-	{
-		ledStates ledStateR, ledStateG, ledStateBlack;
-
-		for(int i = 0; i < LED_IF_NUM_LED; i++) 
-		{
-			ledStateBlack.led[i] = { .red = 0x00, .green = 0x00, .blue = 0x00 };
-			ledStateR.led[i] = { .red = 0x11, .green = 0x00, .blue = 0x00 };
-			ledStateG.led[i] = { .red = 0x00, .green = 0x11, .blue = 0x00 };
-		}
-
-		LEDPatternGenerator generator;
-
-		generator.setInterruptable(false);
-		generator.setRepetitions(1);
-		generator.addState(ledStateR, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.addState(ledStateR, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.generate(&lp1);
-
-		generator.setInterruptable(false);
-		generator.setRepetitions(1);
-		generator.addState(ledStateG, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.addState(ledStateG, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.generate(&lp2);
-	}
-
-	led.reset();
+	GameState exitState = GameState::Running;		
 
 	const char* start_text = "Start\r\n";
     srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds());
@@ -88,10 +55,6 @@ Main::GameState Main::runStartScreen()
 
 		if (controller.getButtonState(BUTTON_A))
 		{
-			led.patternSchedule(lp1);
-			led.patternStart();
-			vTaskDelay(pdMS_TO_TICKS(400));
-
 			switch (selectedButton)
 			{
 			case 0:
@@ -112,12 +75,17 @@ Main::GameState Main::runStartScreen()
 
 Main::GameState Main::runGameScreen()
 {
+	while (true)
+	{
+		board.frame()
+	}
+
 	return GameState::Start;
 }
 
 Main::GameState Main::runEndScreen()
 {
-return GameState::Start;
+	return GameState::Start;
 }
 
 point16 _drawJPEG_destination;
