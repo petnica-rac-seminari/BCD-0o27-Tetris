@@ -101,6 +101,7 @@ void Main::run(void) {
 	
 	GameState gameState = GameState::Start;
 	int exitGame = false;
+	TickType_t tick = xTaskGetTickCount();
 	while (!exitGame)
 	{
 		switch(gameState)

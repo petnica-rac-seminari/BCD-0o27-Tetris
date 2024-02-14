@@ -1,10 +1,11 @@
+#include <freertos/portmacro.h>
 
 namespace tetrics_module
 {
     class board
     {
     public:
-        void frame();
+        void frame(TickType_t currTick);
         void clear();
         void rotateShape(int matrix[4][4][4]);
         void rotate();
