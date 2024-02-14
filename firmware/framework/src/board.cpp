@@ -1,6 +1,6 @@
 
 #include <freertos/mpu_wrappers.h>
-#include<cstdlib>
+#include <cstdlib>
 #include "board.h"
 #include <freertos/projdefs.h>
 
@@ -10,29 +10,34 @@ namespace tetrics_module
 	{
 		currentRotation = 0;
 		clear();
-		createShape();		
+		createShape();
 	}
 	bool board::frame(TickType_t currtick)
 	{
 		TickType_t downDif = pdMS_TO_TICKS(500);
 		TickType_t checkDif = pdMS_TO_TICKS(250);
-		if(lastTick < currtick-downDif){
+		if (lastTick < currtick - downDif)
+		{
 			moveDown();
 			lastTick = currtick;
-		}else if(lastTick < currtick-checkDif){
+		}
+		else if (lastTick < currtick - checkDif)
+		{
 			return checkCollision();
 		}
 		return true;
 	}
 	void board::clear()
-	{		
-		for(int i = 0; i < width; i++){
-			for(int j = 0; j < height; j++){
+	{
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < height; j++)
+			{
 				board[i][j] = 0;
 			}
 		}
 	}
-	void board::rotateShape(int* matrix)
+	void board::rotateShape(int *matrix)
 	{
 		currentRotation = (currentRotation + 1) % 4;
 		for (int i = 0; i < 4; i++)
@@ -40,44 +45,45 @@ namespace tetrics_module
 			for (int j = 0; j < 4; j++)
 			{
 				currentShape[j][i] = matrix[j + i * 4 + currentRotation * 16] * currentShapeColor;
-			}			
-		}		
-	} 
+			}
+		}
+	}
 	void board::rotate()
 	{
-		switch (shapeIndex){
+		switch (shapeIndex)
+		{
 		case 0:
-			rotateShape((int*)I_shape);
+			rotateShape((int *)I_shape);
 			break;
 		case 1:
-			rotateShape((int*)L_shape);
+			rotateShape((int *)L_shape);
 			break;
 		case 2:
-			rotateShape((int*)J_shape);
+			rotateShape((int *)J_shape);
 			break;
 		case 3:
-			rotateShape((int*)Z_shape);
+			rotateShape((int *)Z_shape);
 			break;
 		case 4:
-			rotateShape((int*)T_shape);
+			rotateShape((int *)T_shape);
 			break;
 		case 5:
-			rotateShape((int*)S_shape);
+			rotateShape((int *)S_shape);
 			break;
 		case 6:
-			rotateShape((int*)O_shape);
+			rotateShape((int *)O_shape);
 			break;
 		default:
 			break;
 		}
 	}
-	void board::copyMatrix(int* source, int* destination, int rotIndex)
+	void board::copyMatrix(int *source, int *destination, int rotIndex)
 	{
-		for(int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for (int j = 0; j < 4; j++)
 			{
-				destination[j + i * 4] = source[j + i * 4 + rotIndex * 16]*currentShapeColor;
+				destination[j + i * 4] = source[j + i * 4 + rotIndex * 16] * currentShapeColor;
 			}
 		}
 	}
@@ -87,38 +93,45 @@ namespace tetrics_module
 		currentShapeY = 0;
 		currentShapeColor = rand() % 6 + 1;
 		shapeIndex = rand() % 7;
-		switch(shapeIndex){
-			case 0:
-				copyMatrix((int*)I_shape, (int*)currentShape.data(),0);
-				break;
-			case 1:
-				copyMatrix((int*)L_shape, (int*)currentShape.data(),0);
-				break;
-			case 2:
-				copyMatrix((int*)J_shape, (int*)currentShape.data(),0);
-				break;
-			case 3:
-				copyMatrix((int*)Z_shape, (int*)currentShape.data(),0);
-				break;
-			case 4:
-				copyMatrix((int*)T_shape, (int*)currentShape.data(),0);
-				break;
-			case 5:
-				copyMatrix((int*)S_shape, (int*)currentShape.data(),0);
-				break;
-			case 6:
-				copyMatrix((int*)O_shape, (int*)currentShape.data(),0);
-				break;
+		switch (shapeIndex)
+		{
+		case 0:
+			copyMatrix((int *)I_shape, (int *)currentShape.data(), 0);
+			break;
+		case 1:
+			copyMatrix((int *)L_shape, (int *)currentShape.data(), 0);
+			break;
+		case 2:
+			copyMatrix((int *)J_shape, (int *)currentShape.data(), 0);
+			break;
+		case 3:
+			copyMatrix((int *)Z_shape, (int *)currentShape.data(), 0);
+			break;
+		case 4:
+			copyMatrix((int *)T_shape, (int *)currentShape.data(), 0);
+			break;
+		case 5:
+			copyMatrix((int *)S_shape, (int *)currentShape.data(), 0);
+			break;
+		case 6:
+			copyMatrix((int *)O_shape, (int *)currentShape.data(), 0);
+			break;
 		}
-		for(int i = 0; i < width; i++){
-			for(int j = 0; j < height; j++){
-				if(board[i][j] < 0) board[i][j] = board[i][j]*(-1);
+		for (int i = 0; i < width; i++)
+		{
+			for (int j = 0; j < height; j++)
+			{
+				if (board[i][j] < 0)
+					board[i][j] = board[i][j] * (-1);
 			}
 		}
-		for(int i = currentShapeX; i < currentShapeX+4; i++){
-			for(int j = 0 ; j < 4; j++){
-				if(board[i][j] != 0 && currentShape[i-currentShapeX][j]<0) return false;
-				board[i][j] = currentShape[i-currentShapeX][j];
+		for (int i = currentShapeX; i < currentShapeX + 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				if (board[i][j] != 0 && currentShape[i - currentShapeX][j] < 0)
+					return false;
+				board[i][j] = currentShape[i - currentShapeX][j];
 			}
 		}
 		return true;
@@ -126,93 +139,124 @@ namespace tetrics_module
 	void board::moveRight()
 	{
 		bool canMove = true;
-		for(int i = currentShapeX; i < currentShapeX+4; i++){
-			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && i+1>=width) || (board[i][j] < 0 && board[i+1][j] > 0)){
+		for (int i = currentShapeX; i < currentShapeX + 4; i++)
+		{
+			for (int j = currentShapeY; j < currentShapeY + 4; j++)
+			{
+				if ((board[i][j] < 0 && i + 1 >= width) || (board[i][j] < 0 && board[i + 1][j] > 0))
+				{
 					canMove = false;
 					goto izadji;
 				}
 			}
 		}
-		izadji:
-		if(!canMove) return;
-		for(int i = (currentShapeX+3>width-2)?width-2:currentShapeX+3; i >= currentShapeX; i--){
-			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if(board[i][j] < 0){
-					board[i+1][j] = board[i][j];
+	izadji:
+		if (!canMove)
+			return;
+		for (int i = currentShapeX + 3; i >= currentShapeX; i--)
+		{
+			if (i + 1 >= width)
+				continue;
+			for (int j = currentShapeY; j < currentShapeY + 4; j++)
+			{
+				if (board[i][j] < 0)
+				{
+					board[i + 1][j] = board[i][j];
 					board[i][j] = 0;
 				}
 			}
 		}
-		currentShapeX+=1;
+		currentShapeX += 1;
 	}
 	void board::moveLeft()
 	{
 		bool canMove = true;
-		for(int i = currentShapeX; i < currentShapeX+4; i++){
-			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && i == 0) || (board[i][j] < 0 && board[i-1][j] > 0)){
+		for (int i = currentShapeX; i < currentShapeX + 4; i++)
+		{
+			for (int j = currentShapeY; j < currentShapeY + 4; j++)
+			{
+				if ((board[i][j] < 0 && i == 0) || (board[i][j] < 0 && board[i - 1][j] > 0))
+				{
 					canMove = false;
 					goto izadji;
 				}
 			}
 		}
-		izadji:
-		if(!canMove) return;
-		for(int i = 0; i < currentShapeX+4; i++){
-			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if(board[i][j] < 0){
-					board[i-1][j] = board[i][j];
+	izadji:
+		if (!canMove)
+			return;
+		for (int i = 0; i < currentShapeX + 4; i++)
+		{
+			for (int j = currentShapeY; j < currentShapeY + 4; j++)
+			{
+				if (board[i][j] < 0)
+				{
+					board[i - 1][j] = board[i][j];
 					board[i][j] = 0;
 				}
 			}
 		}
-		currentShapeX-=1;
-		
+		currentShapeX -= 1;
 	}
 	void board::moveDown()
 	{
 		bool canMove = true;
-		for(int i = currentShapeX; i < currentShapeX+4; i++){
-			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && j+1 == height) || (board[i][j] < 0 && board[i][j+1] > 0)){
+		for (int i = currentShapeX; i < currentShapeX + 4; i++)
+		{
+			for (int j = currentShapeY; j < currentShapeY + 4; j++)
+			{
+				if ((board[i][j] < 0 && j + 1 == height) || (board[i][j] < 0 && board[i][j + 1] > 0))
+				{
 					canMove = false;
 					goto izadji;
 				}
 			}
 		}
-		izadji:
-		if(!canMove) return;
-		for(int j = currentShapeY+3; j >= currentShapeY; j--){
-			for(int i = 0; i < currentShapeX+4; i++){
-				if(board[i][j] < 0){
-					board[i][j+1] = board[i][j];
+	izadji:
+		if (!canMove)
+			return;
+		for (int j = currentShapeY + 3; j >= currentShapeY; j--)
+		{
+			for (int i = 0; i < currentShapeX + 4; i++)
+			{
+				if (board[i][j] < 0)
+				{
+					board[i][j + 1] = board[i][j];
 					board[i][j] = 0;
 				}
 			}
 		}
-		currentShapeY+=1;
+		currentShapeY += 1;
 	}
 	bool board::checkCollision()
 	{
 		bool canMove = true;
-		for(int i = currentShapeX; i < currentShapeX+4; i++){
-			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && j+1 == height) || (board[i][j] < 0 && board[i][j+1] > 0))
+		for (int i = currentShapeX; i < currentShapeX + 4; i++)
+		{
+			for (int j = currentShapeY; j < currentShapeY + 4; j++)
+			{
+				if ((board[i][j] < 0 && j + 1 == height) || (board[i][j] < 0 && board[i][j + 1] > 0))
 					canMove = false;
 			}
 		}
-		for(int j = height-1; j > 0; j--){
+		for (int j = height - 1; j > 0; j--)
+		{
 			int numOfBlocks = 0;
-			for(int i = 0; i < width; i++){
-				if(board[i][j]>0) numOfBlocks++;
+			for (int i = 0; i < width; i++)
+			{
+				if (board[i][j] > 0)
+					numOfBlocks++;
 			}
-			if(numOfBlocks == width){
-				for(int k = j; k > 0; k--){
-					for(int i =0; i < width; i++){
-						if(board[i][k-1] >= 0)
-							board[i][k] = board[i][k-1];
-						else if(k == j){
+			if (numOfBlocks == width)
+			{
+				for (int k = j; k > 0; k--)
+				{
+					for (int i = 0; i < width; i++)
+					{
+						if (board[i][k - 1] >= 0)
+							board[i][k] = board[i][k - 1];
+						else if (k == j)
+						{
 							board[i][k] = 0;
 						}
 					}
@@ -220,13 +264,14 @@ namespace tetrics_module
 				j++;
 			}
 		}
-		if(!canMove) {
+		if (!canMove)
+		{
 			return createShape();
 		}
 		return true;
 	}
 	int board::getTile(int x, int y)
 	{
-		return 0;	
+		return 0;
 	}
 }
