@@ -76,11 +76,9 @@ namespace tetrics_module
 		default:
 			break;
 		}
-		for (int i = currentShapeX; i < currentShapeX + 3; i++)
-		{
-			for (int j = currentShapeY; j < currentShapeY + 3;)
-			{
-				board[i][j] = currentShape[i - currentShapeX][j - currentShapeY];
+		for(int i = currentShapeX; i < currentShapeX+3; i++){
+			for(int j = currentShapeY; j < currentShapeY+3; j++){
+				board[i][j] = currentShape[i-currentShapeX][j-currentShapeY];
 			}
 		}
 	}
