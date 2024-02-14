@@ -5,9 +5,9 @@ Main::GameState Main::runStartScreen()
 	GameState exitState = GameState::Running;
 	
 	const char* start_text = "Start";
-    srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds()).offset(0, -3);
+    srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds().offset(0, -3));
 	const char* exit_text = "Exit";
-    srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height() + 2);
+    srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height());
 	
 	lcd.clear(lcd.bounds());
 
@@ -19,8 +19,8 @@ Main::GameState Main::runStartScreen()
 	int selectedButton = 0;
 	auto renderScene = [&]()
 	{
-		rect16 startDot = rect16(point16(start_text_rect.left(), (start_text_rect.y1 + start_text_rect.y2) / 2).offset(-10, -6), size16(6, 6));
-		rect16 exitDot = rect16(point16(exit_text_rect.left(), (exit_text_rect.y1 + exit_text_rect.y2) / 2).offset(-10, -6), size16(6, 6));
+		rect16 startDot = rect16(point16(start_text_rect.left(), (start_text_rect.y1 + start_text_rect.y2) / 2).offset(-10, -3), size16(6, 6));
+		rect16 exitDot = rect16(point16(exit_text_rect.left(), (exit_text_rect.y1 + exit_text_rect.y2) / 2).offset(-10, -3), size16(6, 6));
 		switch (selectedButton)
 		{
 		case 0:
@@ -42,6 +42,7 @@ Main::GameState Main::runStartScreen()
 	{
 		controller.capture();
 
+
 		if (controller.getButtonState(BUTTON_UP))
 		{
 			if (selectedButton > 0)
@@ -59,7 +60,7 @@ Main::GameState Main::runStartScreen()
 			}
 		}
 
-		if (controller.getButtonState(BUTTON_A))
+		if (controller.getButtonState(BUTTON_A) || controller.getButtonState(BUTTON_B))
 		{
 			switch (selectedButton)
 			{
@@ -93,6 +94,34 @@ Main::GameState Main::runGameScreen()
 	{
 		controller.clear();
 		controller.capture();
+
+		if (controller.getButtonState(BUTTON_X) || controller.getButtonState(BUTTON_Y))
+		{
+			return GameState::Start;
+		}
+		if (controller.getButtonState(BUTTON_LEFT))
+		{
+			board.moveLeft();
+		}
+		if (controller.getButtonState(BUTTON_RIGHT))
+		{
+			board.moveRight();
+		}
+		if (controller.getButtonState(BUTTON_DOWN))
+		{
+			board.moveDown();
+		}
+		if (controller.getButtonState(BUTTON_A) || controller.getButtonState(BUTTON_B))
+		{
+			board.rotate();
+		}
+
+		TickType_t tick = xTaskGetTickCount();
+		if (!board.frame(tick))
+		{
+			ESP_LOGE(TAG_FS, "IZGUBIO/LA SI");
+		}
+
 		// tetrics_module::board gameBoard;
 		int width = board.width;
 		int height = board.height;
@@ -144,9 +173,6 @@ Main::GameState Main::runGameScreen()
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
 		}
-		
-		TickType_t tick = xTaskGetTickCount();
-		board.frame(tick);
 	}
 
 	return GameState::Start;
