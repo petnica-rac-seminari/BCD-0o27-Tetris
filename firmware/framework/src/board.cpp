@@ -133,17 +133,21 @@ namespace tetrics_module
 		bool canMove = true;
 		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && i+1==width) || (board[i][j] < 0 && board[i+1][j] > 0)){
+				if(board[i][j] < 0 && (i+1>=width || board[i+1][j] > 0)){
 					canMove = false;
-					goto izadji;
+					break;
 				}
 			}
+			if (!canMove)
+				break;
 		}
-		izadji:
-		if(!canMove) return;
-		for(int i = (currentShapeX+3>width-2)?width-2:currentShapeX+3; i >= currentShapeX; i--){
+		
+		if(!canMove) 
+			return;
+
+		for(int i = currentShapeX+3; i >= currentShapeX; i--){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if(board[i][j] < 0 && i < width-1){
+				if(board[i][j] < 0){
 					board[i+1][j] = board[i][j];
 					board[i][j] = 0;
 				}
@@ -156,7 +160,7 @@ namespace tetrics_module
 		bool canMove = true;
 		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && i == 0) || (board[i][j] < 0 && board[i-1][j] > 0)){
+				if((board[i][j] < 0 && i <= 0) || (board[i][j] < 0 && board[i-1][j] > 0)){
 					canMove = false;
 					goto izadji;
 				}
@@ -164,7 +168,7 @@ namespace tetrics_module
 		}
 		izadji:
 		if(!canMove) return;
-		for(int i = 0; i < currentShapeX+4; i++){
+		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
 				if(board[i][j] < 0){
 					board[i-1][j] = board[i][j];
@@ -180,7 +184,7 @@ namespace tetrics_module
 		bool canMove = true;
 		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				if((board[i][j] < 0 && j+1 == height) || (board[i][j] < 0 && board[i][j+1] > 0)){
+				if(board[i][j] < 0 && (j+1 >= height || board[i][j+1] > 0)){
 					canMove = false;
 					goto izadji;
 				}
@@ -189,7 +193,7 @@ namespace tetrics_module
 		izadji:
 		if(!canMove) return;
 		for(int j = currentShapeY+3; j >= currentShapeY; j--){
-			for(int i = 0; i < currentShapeX+4; i++){
+			for(int i = currentShapeX; i < currentShapeX+4; i++){
 				if(board[i][j] < 0){
 					board[i][j+1] = board[i][j];
 					board[i][j] = 0;
