@@ -9,9 +9,6 @@ Main::GameState Main::runStartScreen()
 	const char* exit_text = "Exit";
     srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height() + 2);
 	
-	//draw::filled_ellipse(lcd, rect16(point16(10, 10), lcd.dimensions().inflate(-20, -20)), color<pixel_type>::red);	
-	//drawJPEG("/a.jpeg", point16(0, 0));
-
 	lcd.clear(lcd.bounds());
 
 	draw::filled_rectangle(lcd, rect16(point16(45, 46),size16(70, 36)), color<pixel_type>::black);
@@ -85,27 +82,19 @@ Main::GameState Main::runStartScreen()
 Main::GameState Main::runGameScreen()
 {
 	const char* TETRIS_text = "TETRIS";
-    srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
-	//const char* exitInfo_text = "Click <BACK> to exit game";
-    //srect16 exitInfo_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exitInfo_text).bounds();
-	//exitInfo_text_rect.y1 = 120;
-	//exitInfo_text_rect.y2 = 128;
+    srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());	
 
-	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
-	//draw::text(lcd, exitInfo_text_rect, exitInfo_text, textFont, color<pixel_type>::white);
+	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);	
 
 	board.start();
 
 	while (true)
 	{
-		// cistimo ekran
-		//lcd.clear(lcd.bounds());
-
+		controller.clear();
+		controller.capture();
 		// tetrics_module::board gameBoard;
 		int width = board.width;
 		int height = board.height;
-
-		board.clear();
 
 		// petlja prolazi kroz matricu
 		for (int i = 0; i < width; ++i)
@@ -154,6 +143,7 @@ Main::GameState Main::runGameScreen()
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
 		}
+		
 		TickType_t tick = xTaskGetTickCount();
 		board.frame(tick);
 	}
