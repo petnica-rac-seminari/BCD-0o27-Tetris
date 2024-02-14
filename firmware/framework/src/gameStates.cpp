@@ -2,73 +2,68 @@
 
 Main::GameState Main::runStartScreen()
 {
-	GameState exitState = GameState::Running;	
-
-	draw::filled_ellipse(lcd, rect16(point16(10, 10), lcd.dimensions().inflate(-20, -20)), color<pixel_type>::red);	
-
-	drawJPEG("/a.jpeg", point16(0, 0));	
+	GameState exitState = GameState::Running;		
 
 	const char* start_text = "Start\r\n";
     srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds());
 	const char* exit_text = "Exit\r\n";
-    srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).inflate(0, -start_text_rect.height());
-
-    draw::text(lcd, start_text_rect, start_text, textFont, color<pixel_type>::white);
-    draw::text(lcd, exit_text_rect, exit_text, textFont, color<pixel_type>::white);
-
-	ledPattern lp1, lp2;
-
-	{
-		ledStates ledStateR, ledStateG, ledStateBlack;
-
-		for(int i = 0; i < LED_IF_NUM_LED; i++) 
-		{
-			ledStateBlack.led[i] = { .red = 0x00, .green = 0x00, .blue = 0x00 };
-			ledStateR.led[i] = { .red = 0x11, .green = 0x00, .blue = 0x00 };
-			ledStateG.led[i] = { .red = 0x00, .green = 0x11, .blue = 0x00 };
-		}
-
-		LEDPatternGenerator generator;
-
-		generator.setInterruptable(false);
-		generator.setRepetitions(1);
-		generator.addState(ledStateR, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.addState(ledStateR, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.generate(&lp1);
-
-		generator.setInterruptable(false);
-		generator.setRepetitions(1);
-		generator.addState(ledStateG, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.addState(ledStateG, pdMS_TO_TICKS(100));
-		generator.addState(ledStateBlack, pdMS_TO_TICKS(100));
-		generator.generate(&lp2);
-	}
-
-	led.reset();
+    srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height());
 	
+	int selectedButton = 0;
+	auto renderScene = [&]() {
+		draw::filled_ellipse(lcd, rect16(point16(10, 10), lcd.dimensions().inflate(-20, -20)), color<pixel_type>::red);	
+
+		drawJPEG("/a.jpeg", point16(0, 0));
+
+    	draw::text(lcd, start_text_rect, start_text, textFont, color<pixel_type>::white);
+    	draw::text(lcd, exit_text_rect, exit_text, textFont, color<pixel_type>::white);
+
+		switch (selectedButton)
+		{
+		case 0: {
+			point16 pos = point16(start_text_rect.x1, (start_text_rect.y1 + start_text_rect.y2) / 2).offset(-20, -5);
+			draw::filled_ellipse(lcd, rect16(pos, size16(6, 6)), color<pixel_type>::white);
+			break;
+		}
+		case 1:
+			point16 pos = point16(exit_text_rect.x1, (exit_text_rect.y1 + exit_text_rect.y2) / 2).offset(-20, -5);
+			draw::filled_ellipse(lcd, rect16(pos, size16(6, 6)), color<pixel_type>::white);
+			break;
+		}
+	};
+
+	renderScene();
+
 	while (true)
-	{
+	{		
 		controller.capture();
+
+		if (controller.getButtonState(BUTTON_UP))
+		{
+			if (selectedButton > 0)
+				--selectedButton;
+
+			renderScene();
+		}
+		if (controller.getButtonState(BUTTON_DOWN))
+		{
+			if (selectedButton < 1)
+				++selectedButton;
+
+			renderScene();
+		}
 
 		if (controller.getButtonState(BUTTON_A))
 		{
-			led.patternSchedule(lp1);
-			led.patternStart();
-			vTaskDelay(pdMS_TO_TICKS(400));
-
-			exitState = Main::GameState::Running;
-			break;
-		}
-		if (controller.getButtonState(BUTTON_X))
-		{
-			led.patternSchedule(lp2);
-			led.patternStart();	
-			vTaskDelay(pdMS_TO_TICKS(400));
+			switch (selectedButton)
+			{
+			case 0:
+				exitState = GameState::Running;
+				break;
+			case 1:
+				exitState = GameState::Exit;
+			}
 			
-			exitState = Main::GameState::Running;
 			break;
 		}
 	}
@@ -80,12 +75,17 @@ Main::GameState Main::runStartScreen()
 
 Main::GameState Main::runGameScreen()
 {
- return GameState::Start;
+	while (true)
+	{
+		board.frame()
+	}
+
+	return GameState::Start;
 }
 
 Main::GameState Main::runEndScreen()
 {
-return GameState::Start;
+	return GameState::Start;
 }
 
 point16 _drawJPEG_destination;
