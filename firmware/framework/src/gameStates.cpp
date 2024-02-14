@@ -3,12 +3,12 @@
 Main::GameState Main::runStartScreen()
 {
 	GameState exitState = GameState::Running;
-	
-	const char* start_text = "Start";
-    srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds()).offset(0, -3);
-	const char* exit_text = "Exit";
-    srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height() + 2);
-	
+
+	const char *start_text = "Start";
+	srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds()).offset(0, -3);
+	const char *exit_text = "Exit";
+	srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height() + 2);
+
 	lcd.clear(lcd.bounds());
 
 	draw::filled_rectangle(lcd, rect16(point16(45, 46), size16(70, 36)), color<pixel_type>::black);
@@ -82,10 +82,10 @@ Main::GameState Main::runStartScreen()
 
 Main::GameState Main::runGameScreen()
 {
-	const char* TETRIS_text = "TETRIS";
-    srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());	
+	const char *TETRIS_text = "TETRIS";
+	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
 
-	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);	
+	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
 
 	board.start();
 
