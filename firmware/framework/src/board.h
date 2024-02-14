@@ -87,8 +87,8 @@ namespace tetrics_module
 
         TickType_t lastTick = 0;
         void copyMatrix(int *source, int *destination, int rotIndex);
-        void createShape();
-        void checkCollision();
+        bool createShape();
+        bool checkCollision();
         int shapeIndex;
         std::array<std::array<int, 4>, 4> currentShape;
         int currentShapeX;
