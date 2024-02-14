@@ -1,5 +1,6 @@
+#include <FreeRTOSConfig.h>
 #include <freertos/portmacro.h>
-
+#include <freertos/projdefs.h>
 namespace tetrics_module
 {
     class board
@@ -69,7 +70,7 @@ namespace tetrics_module
                                 {{-1, -1, 0, 0}, {-1, -1, 0, 0}, {0, 0, 0, 0},  {0, 0, 0, 0}}
                                 };
         
-
+        TickType_t lastTick = 0;
         void copyMatrix(int source[4][4][4], int destination[4][4], int rotIndex);
         void createShape();
         void checkCollision();
