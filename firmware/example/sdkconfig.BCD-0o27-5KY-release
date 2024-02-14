@@ -458,6 +458,7 @@ CONFIG_LCD_PIN_RST=15
 CONFIG_LCD_PIN_BCKL=16
 CONFIG_MAD_RGB=y
 # CONFIG_MAD_BGR is not set
+CONFIG_TAG_DISPLAY="DISPLAY"
 # end of Display Configuration
 
 #
@@ -1853,6 +1854,10 @@ CONFIG_WPA_MBEDTLS_TLS_CLIENT=y
 # end of Module: Snake
 
 #
+# CH405Labs Hardware
+#
+
+#
 # CH405Labs Console
 #
 # end of CH405Labs Console
@@ -1870,6 +1875,7 @@ CONFIG_CH405LABS_CONTROLLER_PIN_LOAD=5
 #
 # CH405LABS LED Interface
 #
+CONFIG_LED_IF_SUPPORT=y
 # end of CH405LABS LED Interface
 
 #

@@ -65,9 +65,30 @@ void Main::run(void) {
 	// Everything that needs to be set up or run before moving into the main 
 	// loop can be put here.
 	
-	// <--- Put setup code and one time acitons below -->
+	// <--- Put setup code and one time acitons below -->	
+
 	
-	// <--- Put setup code and one time acitons above -->
+	screenSize = lcd.dimensions();
+    screenBuffer = (uint8_t *)malloc(bmp_type::sizeof_buffer(screenSize)*sizeof(uint8_t));
+
+    if(screenBuffer == nullptr)
+        ESP_LOGW("Tetris", "Not buffering display: Not enough free memory.");
+    else 
+	{
+        screen = (bmp_type *)malloc(sizeof(bmp_type));
+
+        if(screen == nullptr) 
+		{
+            ESP_LOGW("Tetris", "Not buffering display: Not enough free memory.");
+            free(screenBuffer);
+            screenBuffer = nullptr;
+        } 
+		else 		
+            screen = new (screen) bmp_type(screenSize, screenBuffer);
+    }
+	
+
+	// --- Put setup code and one time acitons above -->
 
 
 	// 4 Implement your main loop
@@ -77,35 +98,29 @@ void Main::run(void) {
 
 	// <--- Implement your main loop below -->
 	// Make sure your main loop never terminates.
-
-	// 0 - start of game
-	// 1 - in game
-	// 2 - end screen
-	int gameState = 0;
-
-	while (true)
+	
+	GameState gameState = GameState::Start;
+	int exitGame = false;
+	while (!exitGame)
 	{
 		switch(gameState)
 		{
-		case 0:			
-			drawStartScreen();
-			if (controller.getButtonState(BUTTON_A))
-			{
-				gameState = 1;
-				board.clear();
-			}
+		case GameState::Start:
+			gameState = runStartScreen();
 			break;
-		case 1:
-			drawGameScreen();
+		case GameState::Running:
+			gameState = runGameScreen();
 			break;
-		case 2:
-			drawEndScreen();
+		case GameState::End:
+			gameState = runEndScreen();
 			break;
-		}		
-	}
+		case GameState::Exit:
+			exitGame = true;
+			break;
+		}
+	}	
 	// <--- Implement your main loop above -->
-
-
+	
 	// --> You might want to ensure your code is complete above this line and the code
 	//     below this line is never reached, unless you know what you are doing.
 
@@ -603,7 +618,7 @@ void Main::setup(void) {
 	/* Inspect our own high water mark on entering the task. */
 	uxHighWaterMark = uxTaskGetStackHighWaterMark( NULL );
 	ESP_LOGD(TAG_STACK, "Main:setup(): High watermark for stack at end is: %d", uxHighWaterMark);
-#endif
+#endif	
 }
 
 
