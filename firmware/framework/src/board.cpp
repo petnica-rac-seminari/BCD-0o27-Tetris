@@ -87,10 +87,12 @@ namespace tetrics_module
 				}
 			}
 		}
-		
+
 		for(int i = currentShapeX; i < currentShapeX+4; i++){
 			for(int j = currentShapeY; j < currentShapeY+4; j++){
-				board[i][j] = currentShape[i-currentShapeX][j-currentShapeY];
+				if(board[i][j] < 0) board[i][j] = 0;
+				if(currentShape[i-currentShapeX][j-currentShapeY] < 0)
+					board[i][j] = currentShape[i-currentShapeX][j-currentShapeY];
 			}
 		}
 	}
