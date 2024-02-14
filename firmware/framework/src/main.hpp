@@ -61,6 +61,11 @@ using namespace gfx;
 static const char TAG_STATE[] = "State";
 static const char TAG_FS[] = "Filesystem";
 
+using pixel_type = rgb_pixel<16>;
+using bmp_type = bitmap<pixel_type>;
+using const_bmp_type = const_bitmap<rgb_pixel<16>>;
+using mask_type = const_bitmap<gsc_pixel<1>>;
+using sprite_type = sprite<rgb_pixel<16>>;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Programm entry point definition
@@ -95,11 +100,25 @@ class Main final {
 
         tetrics_module::board board;
 
+        size16 screenSize = size16(0, 0);
+        bmp_type* screen = nullptr;
+        uint8_t* screenBuffer = nullptr;
+        const font& textFont = Bm437_Acer_VGA_8x8_FON;
     public:
+        enum class GameState
+        {
+            Start,
+            Running,
+            End,
+            Exit,
+        };
+
         void run(void);                                                         /**< Main loop */
         void setup(void);                                                       /**< Setup / initialisation code */
 
-        void drawStartScreen();
-        void drawGameScreen();
-        void drawEndScreen();
+        GameState runStartScreen();
+        GameState runGameScreen();
+        GameState runEndScreen();
+
+        void drawJPEG(const char* path, point16 destination);
 };
