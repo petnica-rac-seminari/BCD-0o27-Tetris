@@ -143,29 +143,22 @@ namespace tetrics_module
 	}
 	void board::moveRight()
 	{
-		bool canMove = true;
 		for (int i = currentShapeX; i < currentShapeX + 4; i++)
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
 				if (board[i][j] < 0 && (i + 1 >= width || board[i + 1][j] > 0))
 				{
-					canMove = false;
-					break;
+					return;
 				}
 			}
-			if (!canMove)
-				break;
 		}
-
-		if (!canMove)
-			return;
 
 		for (int i = currentShapeX + 3; i >= currentShapeX; i--)
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
-				if (board[i][j] < 0)
+				if (board[i][j] < 0 && i+1<width) 
 				{
 					board[i + 1][j] = board[i][j];
 					board[i][j] = 0;
@@ -176,21 +169,16 @@ namespace tetrics_module
 	}
 	void board::moveLeft()
 	{
-		bool canMove = true;
 		for (int i = currentShapeX; i < currentShapeX + 4; i++)
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
 			{
-				if ((board[i][j] < 0 && i <= 0) || (board[i][j] < 0 && board[i - 1][j] > 0))
+				if (board[i][j] < 0 && (i <= 0 || board[i - 1][j] > 0))
 				{
-					canMove = false;
-					goto izadji;
+					return;
 				}
 			}
 		}
-	izadji:
-		if (!canMove)
-			return;
 		for (int i = currentShapeX; i < currentShapeX + 4; i++)
 		{
 			for (int j = currentShapeY; j < currentShapeY + 4; j++)
