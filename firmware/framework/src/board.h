@@ -10,7 +10,7 @@ namespace tetrics_module
         void start();
         void frame(TickType_t currTick);
         void clear();
-        void rotateShape(int*** matrix);
+        void rotateShape(int* matrix);
         void rotate();
         void moveLeft();
         void moveRight();
@@ -72,7 +72,7 @@ namespace tetrics_module
                                 };
         
         TickType_t lastTick = 0;
-        void copyMatrix(int*** source, int** destination, int rotIndex);
+        void copyMatrix(int* source, int* destination, int rotIndex);
         void createShape();
         void checkCollision();
         int shapeIndex;

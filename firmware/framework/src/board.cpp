@@ -32,52 +32,52 @@ namespace tetrics_module
 			}
 		}
 	}
-	void board::rotateShape(int*** matrix)
+	void board::rotateShape(int* matrix)
 	{
 		currentRotation = (currentRotation + 1) % 4;
 		for (int i = 0; i < 4; i++)
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				currentShape[i][j] = matrix[currentRotation][i][j]*currentShapeColor;
-			}
-			
-		}
-		
+				currentShape[j][i] = matrix[j + i * 4 + currentRotation * 16] * currentShapeColor;
+			}			
+		}		
 	} 
 	void board::rotate()
 	{
 		switch (shapeIndex){
 		case 0:
-			rotateShape((int***)I_shape);
+			rotateShape((int*)I_shape);
 			break;
 		case 1:
-			rotateShape((int***)L_shape);
+			rotateShape((int*)L_shape);
 			break;
 		case 2:
-			rotateShape((int***)J_shape);
+			rotateShape((int*)J_shape);
 			break;
 		case 3:
-			rotateShape((int***)Z_shape);
+			rotateShape((int*)Z_shape);
 			break;
 		case 4:
-			rotateShape((int***)T_shape);
+			rotateShape((int*)T_shape);
 			break;
 		case 5:
-			rotateShape((int***)S_shape);
+			rotateShape((int*)S_shape);
 			break;
 		case 6:
-			rotateShape((int***)O_shape);
+			rotateShape((int*)O_shape);
 			break;
 		default:
 			break;
 		}
 	}
-	void board::copyMatrix(int*** source, int** destination, int rotIndex)
+	void board::copyMatrix(int* source, int* destination, int rotIndex)
 	{
-		for(int i = 0; i < 4; i++){
-			for(int j = 0; j < 4; j++){
-				destination[i][j] = source[rotIndex][i][j]*currentShapeColor;
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				destination[j + i * 4] = source[j + i * 4 + rotIndex * 16]*currentShapeColor;
 			}
 		}
 	}
@@ -89,25 +89,25 @@ namespace tetrics_module
 		shapeIndex = rand() % 7;
 		switch(shapeIndex){
 			case 0:
-				copyMatrix((int***)I_shape, (int**)currentShape.data(),0);
+				copyMatrix((int*)I_shape, (int*)currentShape.data(),0);
 				break;
 			case 1:
-				copyMatrix((int***)L_shape, (int**)currentShape.data(),0);
+				copyMatrix((int*)L_shape, (int*)currentShape.data(),0);
 				break;
 			case 2:
-				copyMatrix((int***)J_shape, (int**)currentShape.data(),0);
+				copyMatrix((int*)J_shape, (int*)currentShape.data(),0);
 				break;
 			case 3:
-				copyMatrix((int***)Z_shape, (int**)currentShape.data(),0);
+				copyMatrix((int*)Z_shape, (int*)currentShape.data(),0);
 				break;
 			case 4:
-				copyMatrix((int***)T_shape, (int**)currentShape.data(),0);
+				copyMatrix((int*)T_shape, (int*)currentShape.data(),0);
 				break;
 			case 5:
-				copyMatrix((int***)S_shape, (int**)currentShape.data(),0);
+				copyMatrix((int*)S_shape, (int*)currentShape.data(),0);
 				break;
 			case 6:
-				copyMatrix((int***)O_shape, (int**)currentShape.data(),0);
+				copyMatrix((int*)O_shape, (int*)currentShape.data(),0);
 				break;
 		}
 		for(int i = 0; i < width; i++){
