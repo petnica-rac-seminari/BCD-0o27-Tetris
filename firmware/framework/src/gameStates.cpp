@@ -107,22 +107,49 @@ Main::GameState Main::runStartScreen()
 	return exitState;
 }
 
+pixel_type getColor(int value)
+{
+	switch (value)
+	{
+	case 0:
+		return color<pixel_type>::black;
+	case 1:
+		return color<pixel_type>::red;
+	case 2:
+		return color<pixel_type>::orange;
+	case 3:
+		return color<pixel_type>::yellow;
+	case 4:
+		return color<pixel_type>::green;
+	case 5:
+		return color<pixel_type>::blue;
+	case 6:
+		return color<pixel_type>::violet;
+	default:
+		ESP_LOGE(TAG_FS, "Invalid board value");
+		return color<pixel_type>::brown;
+	}
+}
+
 Main::GameState Main::runGameScreen()
 {
-	const char *TETRIS_text = "TETRIS";
-	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
+	const char *TETRIS_text = "TETRIS";	
+	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());		
+	const char *Next_text = "Next";
+	srect16 Next_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), Next_text).bounds().offset(115, 40);
 
 	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
+	draw::text(lcd, Next_text_rect, Next_text, textFont, color<pixel_type>::white);
 	draw::rectangle(lcd, rect16(point16(54, 9), size16(52, 112)), color<pixel_type>::white);
+	draw::rectangle(lcd, rect16(point16(114, 49), size16(32, 32)), color<pixel_type>::white);
 
 	board.start();
 
 	while (true)
 	{
 		updateInput();
-
-		ESP_LOGE(TAG_FS, "frame");
-
+		
+		//ESP_LOGE(TAG_FS, "score: %d checkDiffS: %d", board.score, board.checkDifMS);
 		
 		if (backButtonPressed) {
 			break;
@@ -142,68 +169,32 @@ Main::GameState Main::runGameScreen()
 		if (selectButtonPressed)
 		{
 			board.rotate();
-		}		
-
+		}
+	
 		TickType_t tick = xTaskGetTickCount();
 		if (!board.frame(tick))
 		{
 			ESP_LOGE(TAG_FS, "IZGUBIO/LA SI");
-		}
+		}		
 
-		// tetrics_module::board gameBoard;
-		int width = board.width;
-		int height = board.height;
-
-		// petlja prolazi kroz matricu
-		for (int i = 0; i < width; ++i)
-		{
-			for (int j = 0; j < height; ++j)
-			{
-				// tile je jedno polje u matrici
-				// na osnovu toga da li je polje popunjeno ili ne
-				// popunjavamo ga crvenom (popunjeno) ili crnom (nepopunjeno)
-				int tile = abs(board.board[i][j]);
-				pixel_type rectColor;
-				
-				if (tile == 0)
-				{
-					rectColor = color<pixel_type>::black;
-				}
-				else
-				{
-					switch (tile)
-					{
-					case 1:
-						rectColor = color<pixel_type>::red;
-						break;
-					case 2:
-						rectColor = color<pixel_type>::orange;
-						break;
-					case 3:
-						rectColor = color<pixel_type>::yellow;
-						break;
-					case 4:
-						rectColor = color<pixel_type>::green;
-						break;
-					case 5:
-						rectColor = color<pixel_type>::blue;
-						break;
-					case 6:
-						rectColor = color<pixel_type>::violet;
-						break;
-					default:
-						rectColor = color<pixel_type>::brown;
-						ESP_LOGE(TAG_FS, "Invalid board value");
-						break;
-					}
-				}
-				
-				// kreiramo polje
-				rect16 rectangle(point16(55 + i * 5, 10 + j * 5), size16(5, 5));
-				// iscrtavamo polje
+		for (int i = 0; i < 4; ++i)		
+			for (int j = 0; j < 4; ++j)
+			{								
+				pixel_type rectColor = getColor(abs(board.nextShape[i][j]));
+				rect16 rectangle(point16(115 + i * 5, 50 + j * 5), size16(5, 5));
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
-		}		
+
+		// petlja prolazi kroz matricu
+		for (int i = 0; i < board.width; ++i)		
+			for (int j = 0; j < board.height; ++j)
+			{								
+				pixel_type rectColor = getColor(abs(board.board[i][j]));
+				rect16 rectangle(point16(55 + i * 5, 10 + j * 5), size16(5, 5));
+				draw::filled_rectangle(lcd, rectangle, rectColor);
+			}		
+
+
 	}
 
 	return GameState::Start;

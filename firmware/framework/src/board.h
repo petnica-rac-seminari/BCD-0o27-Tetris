@@ -18,8 +18,7 @@ namespace tetrics_module
     
         const int width = 10;
         const int height = 22;
-        std::array<std::array<int, 22>, 10> board = {};
-
+        std::array<std::array<int, 22>, 10> board = {};        
     private:
         using piece = std::array<std::array<int, 4>, 4>;
         int currentRotation; // has a value of 0, 1, 2 or 3 depending on the rotation of the figure
@@ -185,11 +184,11 @@ namespace tetrics_module
                       } } )
         };    
     
+    public:
         int inc;
         int score;
-        int speedUp = 5;
-        int downDifMS;
-		int checkDifMS;
+        int speedUp = 10;
+        int downDifMS;		
 		TickType_t lastTick = 0;        
         
         bool createShape();
