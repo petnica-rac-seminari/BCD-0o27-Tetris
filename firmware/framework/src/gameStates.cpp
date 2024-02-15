@@ -2,6 +2,7 @@
 
 void Main::updateInput()
 {	
+	controller.clear();
 	controller.capture();
 
 	bool backButtonPressed_prev_old = backButtonPressed_prev;
@@ -122,8 +123,8 @@ Main::GameState Main::runGameScreen()
 
 		ESP_LOGE(TAG_FS, "frame");
 
-		if (backButtonPressed)
-		{
+		
+		if (backButtonPressed) {
 			break;
 		}
 		if (controller.getButtonState(BUTTON_LEFT))
@@ -138,10 +139,10 @@ Main::GameState Main::runGameScreen()
 		{
 			board.moveDown();
 		}
-		if (controller.getButtonState(BUTTON_B))
+		if (selectButtonPressed)
 		{
 			board.rotate();
-		}
+		}		
 
 		TickType_t tick = xTaskGetTickCount();
 		if (!board.frame(tick))
@@ -163,6 +164,7 @@ Main::GameState Main::runGameScreen()
 				// popunjavamo ga crvenom (popunjeno) ili crnom (nepopunjeno)
 				int tile = abs(board.board[i][j]);
 				pixel_type rectColor;
+				
 				if (tile == 0)
 				{
 					rectColor = color<pixel_type>::black;
@@ -190,7 +192,8 @@ Main::GameState Main::runGameScreen()
 						rectColor = color<pixel_type>::violet;
 						break;
 					default:
-						rectColor = color<pixel_type>::black;
+						rectColor = color<pixel_type>::brown;
+						ESP_LOGE(TAG_FS, "Invalid board value");
 						break;
 					}
 				}

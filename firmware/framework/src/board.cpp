@@ -7,8 +7,7 @@
 namespace tetrics_module
 {
 	void board::start()
-	{
-		currentRotation = 0;
+	{		
 		clear();
 		createShape();
 	}
@@ -37,11 +36,12 @@ namespace tetrics_module
 	{		
 		std::array<std::array<int, 4>, 4> rotatedShape = getShape(shapeIndex, (currentRotation + 1) % 4);
 
-		for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
-			for (int j = std::max(currentShapeY, 0); j < std::min(currentShapeY + 4, height); j++)
-				if(board[i][j] > 0 && rotatedShape[i - currentShapeX][j - currentShapeY] < 0)
+		for (int i = currentShapeX; i < currentShapeX + 4; i++)
+			for (int j = currentShapeY; j < currentShapeY + 4; j++)
+				if (rotatedShape[i - currentShapeX][j - currentShapeY] < 0 && (i < 0 || i >= width || j < 0 || j >= height || board[i][j] > 0))
 					return;
 
+		currentRotation = (currentRotation + 1) % 4;
 		currentShape = rotatedShape;
 
 		for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
@@ -51,27 +51,28 @@ namespace tetrics_module
 					board[i][j] = 0;
 
 				if(currentShape[i - currentShapeX][j - currentShapeY] < 0)
-					board[i][j] = currentShapeColor;
+					board[i][j] = -currentShapeColor;
 			}
 	}	
 	bool board::createShape()
 	{
-		currentShapeX = 3;
+		currentShapeX = rand() % 7;
 		currentShapeY = 0;
 		currentRotation = 0;
 		currentShapeColor = rand() % 6 + 1;
 		shapeIndex = rand() % 7;
 
-		currentShape = getShape(shapeIndex, currentRotation);		
-
-		for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)		
-			for (int j = std::max(currentShapeY, 0); j < std::min(currentShapeY + 4, height); j++)
+		currentShape = getShape(shapeIndex, currentRotation);
+		
+		for (int i = 0; i < 4; i++)		
+			for (int j = 0; j < 4; j++)
 			{
-				if (board[i][j] != 0 && currentShape[i - currentShapeX][j] < 0)
+				if (currentShape[i][j] < 0 && board[currentShapeX + i][currentShapeY + j] != 0)
 					return false;
 
-				board[i][j] = currentShape[i - currentShapeX][j] * currentShapeColor;
-			}
+				if (currentShape[i][j] < 0)
+					board[currentShapeX + i][currentShapeY + j] = -currentShapeColor;
+			}		
 		
 		return true;
 	}
@@ -135,38 +136,36 @@ namespace tetrics_module
 				if (board[i][j] < 0 && (j + 1 == height || board[i][j + 1] > 0))
 					canMove = false;
 
-		if (!canMove)
+		if (canMove)
+			return true;
+
+		for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
+			for (int j = std::max(currentShapeY, 0); j < std::min(currentShapeY + 4, height); j++)
+				if (board[i][j] < 0)
+					board[i][j] = -board[i][j];
+	
+		for (int j = height - 1; j >= 0; j--)
 		{
-			for (int j = height - 1; j >= 0; j--)
+			int numOfBlocks = 0;
+			for (int i = 0; i < width; i++)
 			{
-				int numOfBlocks = 0;
-				for (int i = 0; i < width; i++)
-				{
-					if (board[i][j] > 0)
-						numOfBlocks++;
-				}
-
-				if (numOfBlocks == width)
-				{
-					for (int k = j; k > 0; k--)
-						for (int i = 0; i < width; i++)
-							board[i][k] = board[i][k - 1];
-
-					for (int i = 0; i < width; i++)
-						board[i][0] = 0;
-
-					j++;
-				}
+				if (board[i][j] > 0)
+					numOfBlocks++;
 			}
-			
-			for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
-				for (int j = std::max(currentShapeY, 0); j < std::min(currentShapeY + 4, height); j++)
-					if (board[i][j] < 0)
-						board[i][j] = -board[i][j];
 
-			return createShape();
+			if (numOfBlocks == width)
+			{
+				for (int k = j; k > 0; k--)
+					for (int i = 0; i < width; i++)
+						board[i][k] = board[i][k - 1];
+						
+				for (int i = 0; i < width; i++)
+					board[i][0] = 0;
+				j++;
+			}
 		}
-		return true;
+
+		return createShape();
 	}	
 	board::piece board::getShape(int shapeIndex, int rotation)
 	{

@@ -184,11 +184,12 @@ namespace tetrics_module
                       } } )
         };    
 
-        TickType_t lastTick = 0;        
+        TickType_t lastTick = 0;
+
         bool createShape();
         bool checkCollision();
         piece getShape(int shapeIndex, int rotation);
-        
+
         int shapeIndex;
         piece currentShape;
         int currentShapeX;
