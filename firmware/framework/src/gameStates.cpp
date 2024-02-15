@@ -1,7 +1,7 @@
 #include "main.hpp"
 
 void Main::updateInput()
-{	
+{
 	controller.clear();
 	controller.capture();
 
@@ -24,7 +24,7 @@ void Main::updateInput()
 	rightButtonPressed = rightButtonPressed_prev && !rightButtonPressed_prev_old;
 	downButtonPressed = downButtonPressed_prev && !downButtonPressed_prev_old;
 	upButtonPressed = upButtonPressed_prev && !upButtonPressed_prev_old;
-	selectButtonPressed = selectButtonPressed_prev && !selectButtonPressed_prev_old;	
+	selectButtonPressed = selectButtonPressed_prev && !selectButtonPressed_prev_old;
 }
 
 Main::GameState Main::runStartScreen()
@@ -77,7 +77,7 @@ Main::GameState Main::runStartScreen()
 				renderScene();
 			}
 		}
-		if (downButtonPressed) 
+		if (downButtonPressed)
 		{
 			if (selectedButton < 1)
 			{
@@ -111,9 +111,19 @@ Main::GameState Main::runGameScreen()
 {
 	const char *TETRIS_text = "TETRIS";
 	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
-
 	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
+
 	draw::rectangle(lcd, rect16(point16(54, 9), size16(52, 112)), color<pixel_type>::white);
+
+	//*********
+	const char *score_text = "Score: ";
+	srect16 score_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_text).bounds().center_horizontal((srect16)lcd.bounds()).offset(57, 10);
+	draw::text(lcd, score_text_rect, score_text, textFont, color<pixel_type>::white);
+
+	// const char *score_text = board.score;
+	// srect16 score_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_text).bounds().center_horizontal((srect16)lcd.bounds()).offset(57, 40);
+	// draw::text(lcd, score_text_rect, score_text, textFont, color<pixel_type>::white);
+	//*********
 
 	board.start();
 
@@ -123,8 +133,8 @@ Main::GameState Main::runGameScreen()
 
 		ESP_LOGE(TAG_FS, "frame");
 
-		
-		if (backButtonPressed) {
+		if (backButtonPressed)
+		{
 			break;
 		}
 		if (controller.getButtonState(BUTTON_LEFT))
@@ -142,7 +152,7 @@ Main::GameState Main::runGameScreen()
 		if (selectButtonPressed)
 		{
 			board.rotate();
-		}		
+		}
 
 		TickType_t tick = xTaskGetTickCount();
 		if (!board.frame(tick))
@@ -164,7 +174,7 @@ Main::GameState Main::runGameScreen()
 				// popunjavamo ga crvenom (popunjeno) ili crnom (nepopunjeno)
 				int tile = abs(board.board[i][j]);
 				pixel_type rectColor;
-				
+
 				if (tile == 0)
 				{
 					rectColor = color<pixel_type>::black;
@@ -197,13 +207,13 @@ Main::GameState Main::runGameScreen()
 						break;
 					}
 				}
-				
+
 				// kreiramo polje
 				rect16 rectangle(point16(55 + i * 5, 10 + j * 5), size16(5, 5));
 				// iscrtavamo polje
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
-		}		
+		}
 	}
 
 	return GameState::Start;

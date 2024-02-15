@@ -150,126 +150,24 @@ namespace tetrics_module
                             {0, -1, -1, 0},
                             {0, 0, 0, 0}}})};
 
+                int inc;
+                int score;
+                int speedUp = 5;
+                int downDifMS;
+                int checkDifMS;
                 TickType_t lastTick = 0;
+
                 bool createShape();
                 bool checkCollision();
                 piece getShape(int shapeIndex, int rotation);
 
                 int shapeIndex;
                 piece currentShape;
+                piece nextShape;
                 int currentShapeX;
                 int currentShapeY;
                 int currentShapeColor;
+                int nextShapeColor;
+                int nextShapeIndex;
         };
-
-        piece J_shape[4] = {
-            piece({{{0, 0, -1, 0},
-                    {0, 0, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {-1, -1, -1, 0},
-                    {0, 0, -1, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, 0, 0},
-                    {0, -1, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, 0, 0},
-                    {0, -1, -1, -1},
-                    {0, 0, 0, 0}}})};
-
-        piece Z_shape[4] = {
-            piece({{{0, 0, 0, 0},
-                    {-1, -1, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, 0, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, -1, -1},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, 0, 0},
-                    {0, 0, 0, 0}}})};
-
-        piece T_shape[4] = {
-            piece({{{0, 0, 0, 0},
-                    {-1, -1, -1, 0},
-                    {0, -1, 0, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, 0, -1, 0},
-                    {0, -1, -1, -1},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, -1, 0},
-                    {0, 0, 0, 0}}})};
-
-        piece S_shape[4] = {
-            piece({{{0, 0, 0, 0},
-                    {0, -1, -1, 0},
-                    {-1, -1, 0, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, -1, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, 0, -1, -1},
-                    {0, -1, -1, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, -1, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, -1, 0},
-                    {0, 0, 0, 0}}})};
-
-        piece O_shape[4] = {
-            piece({{{0, 0, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, 0, 0}}}),
-            piece({{{0, 0, 0, 0},
-                    {0, -1, -1, 0},
-                    {0, -1, -1, 0},
-                    {0, 0, 0, 0}}})};
-
-        int inc;
-        int score;
-        int speedUp = 5;
-        int downDifMS;
-        int checkDifMS;
-        TickType_t lastTick = 0;
-
-        bool createShape();
-        bool checkCollision();
-        piece getShape(int shapeIndex, int rotation);
-
-        int shapeIndex;
-        piece currentShape;
-        piece nextShape;
-        int currentShapeX;
-        int currentShapeY;
-        int currentShapeColor;
-        int nextShapeColor;
-        int nextShapeIndex;
-};
 }
