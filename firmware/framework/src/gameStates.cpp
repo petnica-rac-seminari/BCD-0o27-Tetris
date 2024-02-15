@@ -136,21 +136,18 @@ Main::GameState Main::runGameScreen()
 	const char *TETRIS_text = "TETRIS";
 	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
 	const char *Next_text = "Next";
-	srect16 Next_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), Next_text).bounds().offset(115, 40);
+	srect16 Next_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), Next_text).bounds().offset(115, 30);
 	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
 	draw::text(lcd, Next_text_rect, Next_text, textFont, color<pixel_type>::white);
 
 	draw::rectangle(lcd, rect16(point16(54, 9), size16(52, 112)), color<pixel_type>::white);
-	draw::rectangle(lcd, rect16(point16(114, 49), size16(32, 32)), color<pixel_type>::white);
+	draw::rectangle(lcd, rect16(point16(114, 39), size16(32, 32)), color<pixel_type>::white);
 
 	//*********
-	const char *score_text = "Score: ";
-	srect16 score_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_text).bounds().center_horizontal((srect16)lcd.bounds()).offset(57, 10);
+	const char *score_text = "Score";
+	srect16 score_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_text).bounds().offset(155, 50);
 	draw::text(lcd, score_text_rect, score_text, textFont, color<pixel_type>::white);
 
-	// const char *score_text = board.score;
-	// srect16 score_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_text).bounds().center_horizontal((srect16)lcd.bounds()).offset(57, 40);
-	// draw::text(lcd, score_text_rect, score_text, textFont, color<pixel_type>::white);
 	//*********
 
 	board.start();
@@ -188,11 +185,17 @@ Main::GameState Main::runGameScreen()
 			ESP_LOGE(TAG_FS, "IZGUBIO/LA SI");
 		}
 
+		char score_number[128];
+		sprintf(score_number, "%d", board.score);
+		srect16 score_number_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_number).bounds().center((srect16)score_text_rect).offset(0, 10);
+		draw::filled_rectangle(lcd, score_number_rect, color<pixel_type>::black);
+		draw::text(lcd, score_number_rect, score_number, textFont, color<pixel_type>::white);
+
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
 			{
 				pixel_type rectColor = getColor(abs(board.nextShape[i][j]));
-				rect16 rectangle(point16(115 + i * 5, 50 + j * 5), size16(5, 5));
+				rect16 rectangle(point16(120 + i * 5, 45 + j * 5), size16(5, 5));
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
 

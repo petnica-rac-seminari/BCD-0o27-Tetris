@@ -151,7 +151,6 @@ namespace tetrics_module
                             {0, 0, 0, 0}}})};
 
                 int inc;
-                int score;
                 int speedUp = 5;
                 int downDifMS;
                 int checkDifMS;
@@ -161,6 +160,8 @@ namespace tetrics_module
                 bool checkCollision();
                 piece getShape(int shapeIndex, int rotation);
 
+        public:
+                int score;
                 int shapeIndex;
                 piece currentShape;
                 piece nextShape;
