@@ -149,8 +149,6 @@ Main::GameState Main::runGameScreen()
 	{
 		updateInput();
 		
-		//ESP_LOGE(TAG_FS, "score: %d checkDiffS: %d", board.score, board.checkDifMS);
-		
 		if (backButtonPressed) {
 			break;
 		}
@@ -175,26 +173,24 @@ Main::GameState Main::runGameScreen()
 		if (!board.frame(tick))
 		{
 			ESP_LOGE(TAG_FS, "IZGUBIO/LA SI");
-		}		
+		}
 
 		for (int i = 0; i < 4; ++i)		
 			for (int j = 0; j < 4; ++j)
-			{								
+			{
 				pixel_type rectColor = getColor(abs(board.nextShape[i][j]));
-				rect16 rectangle(point16(115 + i * 5, 50 + j * 5), size16(5, 5));
+				rect16 rectangle(point16(120 + i * 5, 55 + j * 5), size16(5, 5));
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
 
 		// petlja prolazi kroz matricu
-		for (int i = 0; i < board.width; ++i)		
+		for (int i = 0; i < board.width; ++i)
 			for (int j = 0; j < board.height; ++j)
-			{								
+			{
 				pixel_type rectColor = getColor(abs(board.board[i][j]));
 				rect16 rectangle(point16(55 + i * 5, 10 + j * 5), size16(5, 5));
 				draw::filled_rectangle(lcd, rectangle, rectColor);
-			}		
-
-
+			}
 	}
 
 	return GameState::Start;
