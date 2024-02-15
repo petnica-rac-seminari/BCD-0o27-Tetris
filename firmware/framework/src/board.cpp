@@ -8,28 +8,33 @@ namespace tetrics_module
 {
 	void board::start()
 	{
-        downDifMS = 500;
-		checkDifMS = 250;
+        downDifMS = 0;		
 		score = 0;
 		currentRotation = 0;
 		inc = 0;
+		
+		nextShapeColor = rand() % 6 + 1;
+		nextShapeIndex = rand() % 7;
+		nextShape = getShape(nextShapeIndex, currentRotation);
+
 		clear();
 		createShape();
-		nextShape[0][0] = 69;
+
 	}
 	bool board::frame(TickType_t currtick)
-	{
+	{		
 		TickType_t downDif = pdMS_TO_TICKS(downDifMS);
-		TickType_t checkDif = pdMS_TO_TICKS(checkDifMS);
-		if (lastTick < currtick - downDif)
+
+		if (downDif < currtick - lastTick)
 		{
-			moveDown();
+			if (checkCollision())
+				moveDown();
+			else
+				return createShape();
+
 			lastTick = currtick;
 		}
-		else if (lastTick < currtick - checkDif)
-		{
-			return checkCollision();
-		}
+		
 		return true;
 	}
 	void board::clear()
@@ -65,31 +70,23 @@ namespace tetrics_module
 		currentShapeX = rand() % 7;
 		currentShapeY = 0;
 		currentRotation = 0;
-		if(nextShape[0][0] == 69) {
-			shapeIndex = rand() % 7;
-			currentShapeColor = rand() % 6 + 1;
-			currentShape = getShape(shapeIndex, currentRotation);
-			nextShapeColor = rand() % 6 + 1;
-			nextShapeIndex = rand() % 7;
-			nextShape = getShape(nextShapeIndex, currentRotation);	
-		}else {
-			currentShape = nextShape;
-			currentShapeColor = nextShapeColor;
-			shapeIndex = nextShapeIndex;
-			nextShapeColor = rand() % 6 + 1;
-			nextShapeIndex = rand() % 7;
-			nextShape = getShape(nextShapeIndex, currentRotation);
-		}
+		currentShape = nextShape;
+		currentShapeColor = nextShapeColor;
+		shapeIndex = nextShapeIndex;
+
+		nextShapeColor = rand() % 6 + 1;
+		nextShapeIndex = rand() % 7;
+		nextShape = getShape(nextShapeIndex, currentRotation);		
 
 		for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)		
 			for (int j = std::max(currentShapeY, 0); j < std::min(currentShapeY + 4, height); j++)
 			{
-				if (currentShape[i][j] < 0 && board[currentShapeX + i][currentShapeY + j] != 0)
+				if (currentShape[i - currentShapeX][j - currentShapeY] < 0 && board[i][j] != 0)
 					return false;
 
-				if (currentShape[i][j] < 0)
-					board[currentShapeX + i][currentShapeY + j] = -currentShapeColor;
-			}		
+				if (currentShape[i - currentShapeX][j - currentShapeY] < 0)
+					board[i][j] = -currentShapeColor;
+			}
 		
 		return true;
 	}
@@ -149,14 +146,22 @@ namespace tetrics_module
 		bool canMove = true;
 
 		for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
+		{
 			for (int j = std::max(currentShapeY, 0); j < std::min(currentShapeY + 4, height); j++)
-				if (board[i][j] < 0 && (j + 1 == height || board[i][j + 1] > 0)){
+				if (board[i][j] < 0 && (j + 1 == height || board[i][j + 1] > 0))				
+				{
 					canMove = false;
-					updateScore(4);
+					break;
 				}
+			
+			if (!canMove)
+				break;
+		}
 
 		if (canMove)
 			return true;
+
+		updateScore(4);
 
 		for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
 			for (int j = std::max(currentShapeY, 0); j < std::min(currentShapeY + 4, height); j++)
@@ -191,14 +196,13 @@ namespace tetrics_module
 					if (board[i][j] < 0)
 						board[i][j] = -board[i][j];
 
-		return createShape();
+		return false;
 	}	
 	void board::updateScore(int increase) {
 		score += increase;
 		inc += increase;
-		if(inc > 10 && downDifMS >= 100) {
-			downDifMS -= speedUp*2;
-			checkDifMS -= speedUp;
+		if(inc > 10 && downDifMS >= speedUp) {
+			downDifMS -= speedUp;
 			inc = 0;
 		}
 	}
