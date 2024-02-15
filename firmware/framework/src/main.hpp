@@ -104,6 +104,22 @@ class Main final {
         //bmp_type* screen = nullptr;
         //uint8_t* screenBuffer = nullptr;
         const font& textFont = Bm437_Acer_VGA_8x8_FON;
+
+        bool upButtonPressed;
+        bool downButtonPressed;
+        bool leftButtonPressed;
+        bool rightButtonPressed;
+        bool selectButtonPressed;
+        bool backButtonPressed;
+
+        bool upButtonPressed_prev;
+        bool downButtonPressed_prev;
+        bool leftButtonPressed_prev;
+        bool rightButtonPressed_prev;
+        bool selectButtonPressed_prev;
+        bool backButtonPressed_prev;
+
+        void updateInput();
     public:
         enum class GameState
         {

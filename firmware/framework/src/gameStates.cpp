@@ -1,11 +1,37 @@
 #include "main.hpp"
 
+void Main::updateInput()
+{	
+	controller.capture();
+
+	bool backButtonPressed_prev_old = backButtonPressed_prev;
+	bool leftButtonPressed_prev_old = leftButtonPressed_prev;
+	bool rightButtonPressed_prev_old = rightButtonPressed_prev;
+	bool downButtonPressed_prev_old = downButtonPressed_prev;
+	bool upButtonPressed_prev_old = upButtonPressed_prev;
+	bool selectButtonPressed_prev_old = selectButtonPressed_prev;
+
+	backButtonPressed_prev = controller.getButtonState(BUTTON_X);
+	leftButtonPressed_prev = controller.getButtonState(BUTTON_LEFT);
+	rightButtonPressed_prev = controller.getButtonState(BUTTON_RIGHT);
+	downButtonPressed_prev = controller.getButtonState(BUTTON_DOWN);
+	upButtonPressed_prev = controller.getButtonState(BUTTON_UP);
+	selectButtonPressed_prev = controller.getButtonState(BUTTON_B);
+
+	backButtonPressed = backButtonPressed_prev && !backButtonPressed_prev_old;
+	leftButtonPressed = leftButtonPressed_prev && !leftButtonPressed_prev_old;
+	rightButtonPressed = rightButtonPressed_prev && !rightButtonPressed_prev_old;
+	downButtonPressed = downButtonPressed_prev && !downButtonPressed_prev_old;
+	upButtonPressed = upButtonPressed_prev && !upButtonPressed_prev_old;
+	selectButtonPressed = selectButtonPressed_prev && !selectButtonPressed_prev_old;	
+}
+
 Main::GameState Main::runStartScreen()
 {
 	GameState exitState = GameState::Running;
 
 	const char *start_text = "Start";
-	srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds()).offset(0, -3);
+	srect16 start_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), start_text).bounds().center((srect16)lcd.bounds()).offset(0, -6);
 	const char *exit_text = "Exit";
 	srect16 exit_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), exit_text).bounds().center(start_text_rect).offset(0, start_text_rect.height() + 2);
 
@@ -40,9 +66,9 @@ Main::GameState Main::runStartScreen()
 
 	while (true)
 	{
-		controller.capture();
+		updateInput();
 
-		if (controller.getButtonState(BUTTON_UP))
+		if (upButtonPressed)
 		{
 			if (selectedButton > 0)
 			{
@@ -50,7 +76,7 @@ Main::GameState Main::runStartScreen()
 				renderScene();
 			}
 		}
-		if (controller.getButtonState(BUTTON_DOWN))
+		if (downButtonPressed) 
 		{
 			if (selectedButton < 1)
 			{
@@ -59,7 +85,7 @@ Main::GameState Main::runStartScreen()
 			}
 		}
 
-		if (controller.getButtonState(BUTTON_A) || controller.getButtonState(BUTTON_B))
+		if (selectButtonPressed)
 		{
 			switch (selectedButton)
 			{
@@ -86,17 +112,19 @@ Main::GameState Main::runGameScreen()
 	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
 
 	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
+	draw::rectangle(lcd, rect16(point16(54, 9), size16(52, 112)), color<pixel_type>::white);
 
 	board.start();
 
 	while (true)
 	{
-		controller.clear();
-		controller.capture();
+		updateInput();
 
-		if (controller.getButtonState(BUTTON_X) || controller.getButtonState(BUTTON_Y))
+		ESP_LOGE(TAG_FS, "frame");
+
+		if (backButtonPressed)
 		{
-			return GameState::Start;
+			break;
 		}
 		if (controller.getButtonState(BUTTON_LEFT))
 		{
@@ -110,7 +138,7 @@ Main::GameState Main::runGameScreen()
 		{
 			board.moveDown();
 		}
-		if (controller.getButtonState(BUTTON_A) || controller.getButtonState(BUTTON_B))
+		if (controller.getButtonState(BUTTON_B))
 		{
 			board.rotate();
 		}
@@ -166,12 +194,13 @@ Main::GameState Main::runGameScreen()
 						break;
 					}
 				}
+				
 				// kreiramo polje
-				rect16 rectangle(point16(i * 5, j * 5), size16(5, 5));
+				rect16 rectangle(point16(55 + i * 5, 10 + j * 5), size16(5, 5));
 				// iscrtavamo polje
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
-		}
+		}		
 	}
 
 	return GameState::Start;
