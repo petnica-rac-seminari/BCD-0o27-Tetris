@@ -197,9 +197,9 @@ Main::GameState Main::runGameScreen()
 			}
 
 		// petlja prolazi kroz matricu
-		for (int i = 0; i < width; ++i)
+		for (int i = 0; i < board.width; ++i)
 		{
-			for (int j = 0; j < height; ++j)
+			for (int j = 0; j < board.height; ++j)
 			{
 				// tile je jedno polje u matrici
 				// na osnovu toga da li je polje popunjeno ili ne
