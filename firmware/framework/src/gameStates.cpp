@@ -107,41 +107,13 @@ Main::GameState Main::runStartScreen()
 	return exitState;
 }
 
-pixel_type getColor(int value)
-{
-	switch (value)
-	{
-	case 0:
-		return color<pixel_type>::black;
-	case 1:
-		return color<pixel_type>::red;
-	case 2:
-		return color<pixel_type>::orange;
-	case 3:
-		return color<pixel_type>::yellow;
-	case 4:
-		return color<pixel_type>::green;
-	case 5:
-		return color<pixel_type>::blue;
-	case 6:
-		return color<pixel_type>::violet;
-	default:
-		ESP_LOGE(TAG_FS, "Invalid board value");
-		return color<pixel_type>::brown;
-	}
-}
-
 Main::GameState Main::runGameScreen()
 {
 	const char *TETRIS_text = "TETRIS";
 	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
-	const char *Next_text = "Next";
-	srect16 Next_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), Next_text).bounds().offset(115, 40);
 	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
-	draw::text(lcd, Next_text_rect, Next_text, textFont, color<pixel_type>::white);
 
 	draw::rectangle(lcd, rect16(point16(54, 9), size16(52, 112)), color<pixel_type>::white);
-	draw::rectangle(lcd, rect16(point16(114, 49), size16(32, 32)), color<pixel_type>::white);
 
 	//*********
 	const char *score_text = "Score: ";
@@ -188,13 +160,9 @@ Main::GameState Main::runGameScreen()
 			ESP_LOGE(TAG_FS, "IZGUBIO/LA SI");
 		}
 
-		for (int i = 0; i < 4; ++i)
-			for (int j = 0; j < 4; ++j)
-			{
-				pixel_type rectColor = getColor(abs(board.nextShape[i][j]));
-				rect16 rectangle(point16(115 + i * 5, 50 + j * 5), size16(5, 5));
-				draw::filled_rectangle(lcd, rectangle, rectColor);
-			}
+		// tetrics_module::board gameBoard;
+		int width = board.width;
+		int height = board.height;
 
 		// petlja prolazi kroz matricu
 		for (int i = 0; i < width; ++i)
@@ -242,6 +210,7 @@ Main::GameState Main::runGameScreen()
 
 				// kreiramo polje
 				rect16 rectangle(point16(55 + i * 5, 10 + j * 5), size16(5, 5));
+				// iscrtavamo polje
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
 		}

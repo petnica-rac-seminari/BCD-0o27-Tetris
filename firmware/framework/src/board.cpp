@@ -8,7 +8,7 @@ namespace tetrics_module
 {
 	void board::start()
 	{
-        downDifMS = 0;		
+        downDifMS = 500;		
 		score = 0;
 		currentRotation = 0;
 		inc = 0;
