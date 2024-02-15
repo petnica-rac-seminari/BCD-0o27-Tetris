@@ -14,6 +14,7 @@ namespace tetrics_module
         void moveLeft();
         void moveRight();
         void moveDown();
+        void updateScore(int increase);
     
         const int width = 10;
         const int height = 22;
@@ -183,17 +184,25 @@ namespace tetrics_module
                       { 0, 0, 0, 0} 
                       } } )
         };    
-
-        TickType_t lastTick = 0;
-
+    
+        int inc;
+        int score;
+        int speedUp = 5;
+        int downDifMS;
+		int checkDifMS;
+		TickType_t lastTick = 0;        
+        
         bool createShape();
         bool checkCollision();
         piece getShape(int shapeIndex, int rotation);
 
         int shapeIndex;
         piece currentShape;
+        piece nextShape;
         int currentShapeX;
         int currentShapeY;
         int currentShapeColor;
+        int nextShapeColor;
+        int nextShapeIndex;
     };
 }
