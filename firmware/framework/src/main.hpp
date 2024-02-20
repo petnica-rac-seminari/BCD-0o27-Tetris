@@ -111,6 +111,7 @@ class Main final {
         bool rightButtonPressed;
         bool selectButtonPressed;
         bool backButtonPressed;
+        bool pauseButtonPressed;
 
         bool upButtonPressed_prev;
         bool downButtonPressed_prev;
@@ -118,6 +119,12 @@ class Main final {
         bool rightButtonPressed_prev;
         bool selectButtonPressed_prev;
         bool backButtonPressed_prev;
+        bool pauseButtonPressed_prev;
+
+        bool paused;
+
+        int previousScores[10];
+        uint previousScoreCount = 0;
 
         void updateInput();
     public:
@@ -126,6 +133,8 @@ class Main final {
             Start,
             Running,
             End,
+            Paused,
+            Lost,
             Exit,
         };
 
@@ -134,6 +143,8 @@ class Main final {
 
         GameState runStartScreen();
         GameState runGameScreen();
+        GameState runPauseScreen();
+        GameState runLostScreen();
         GameState runEndScreen();
 
         void drawJPEG(const char* path, point16 destination);

@@ -11,6 +11,7 @@ void Main::updateInput()
 	bool downButtonPressed_prev_old = downButtonPressed_prev;
 	bool upButtonPressed_prev_old = upButtonPressed_prev;
 	bool selectButtonPressed_prev_old = selectButtonPressed_prev;
+	bool pauseButtonPressed_prev_old = pauseButtonPressed_prev;
 
 	backButtonPressed_prev = controller.getButtonState(BUTTON_X);
 	leftButtonPressed_prev = controller.getButtonState(BUTTON_LEFT);
@@ -18,6 +19,7 @@ void Main::updateInput()
 	downButtonPressed_prev = controller.getButtonState(BUTTON_DOWN);
 	upButtonPressed_prev = controller.getButtonState(BUTTON_UP);
 	selectButtonPressed_prev = controller.getButtonState(BUTTON_B);
+	pauseButtonPressed_prev = controller.getButtonState(BUTTON_Y);
 
 	backButtonPressed = backButtonPressed_prev && !backButtonPressed_prev_old;
 	leftButtonPressed = leftButtonPressed_prev && !leftButtonPressed_prev_old;
@@ -25,6 +27,7 @@ void Main::updateInput()
 	downButtonPressed = downButtonPressed_prev && !downButtonPressed_prev_old;
 	upButtonPressed = upButtonPressed_prev && !upButtonPressed_prev_old;
 	selectButtonPressed = selectButtonPressed_prev && !selectButtonPressed_prev_old;
+	pauseButtonPressed = pauseButtonPressed_prev && !pauseButtonPressed_prev_old;
 }
 
 Main::GameState Main::runStartScreen()
@@ -135,28 +138,45 @@ Main::GameState Main::runGameScreen()
 {
 	const char *TETRIS_text = "TETRIS";
 	srect16 TETRIS_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), TETRIS_text).bounds().center_horizontal((srect16)lcd.bounds());
-	const char *Next_text = "Next";
-	srect16 Next_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), Next_text).bounds().offset(115, 30);
-	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
-	draw::text(lcd, Next_text_rect, Next_text, textFont, color<pixel_type>::white);
-
-	draw::rectangle(lcd, rect16(point16(54, 9), size16(52, 112)), color<pixel_type>::white);
-	draw::rectangle(lcd, rect16(point16(114, 39), size16(32, 32)), color<pixel_type>::white);
-
-	//*********
 	const char *score_text = "Score";
-	srect16 score_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_text).bounds().offset(155, 50);
+	srect16 score_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_text).bounds().offset(115, 10);
+	const char *Next_text = "Next";
+	srect16 Next_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), Next_text).bounds().center(score_text_rect).offset(0, 20);
+	const char* topScore_text = "Top";
+	srect16 topScore_text_rect = textFont.measure_text((ssize16)lcd.dimensions(), topScore_text).bounds().offset(15, 10);
+
+	srect16 GameRectangle_rect = srect16(spoint16(0, 0), ssize16(52, 112)).center_horizontal((srect16)lcd.bounds()).offset(0, 9);
+	srect16 NextRectangle_rect = srect16(spoint16(0, 0), ssize16(32, 32)).center_horizontal(Next_text_rect).offset(0, 9);
+
+	draw::text(lcd, TETRIS_text_rect, TETRIS_text, textFont, color<pixel_type>::white);
 	draw::text(lcd, score_text_rect, score_text, textFont, color<pixel_type>::white);
+	draw::text(lcd, Next_text_rect, Next_text, textFont, color<pixel_type>::white);
+	draw::text(lcd, topScore_text_rect, topScore_text, textFont, color<pixel_type>::white);
 
-	//*********
+	for (int i = 0; i < previousScoreCount; ++i)
+	{
+		char text[128];
+		sprintf(text, "%d", previousScores[i]);
+		srect16 rect = textFont.measure_text((ssize16)lcd.dimensions(), text).bounds().center(topScore_text_rect).offset(0, 10 + 10 * i);
 
-	board.start();
+		draw::text(lcd, rect, text, textFont, color<pixel_type>::gray);
+	}
+	
+	draw::rectangle(lcd, GameRectangle_rect, color<pixel_type>::white);
+	draw::rectangle(lcd, NextRectangle_rect, color<pixel_type>::white);
+	
+	if (!paused)
+		board.start();
+	paused = false;
 
+	uint8_t* gameBmpBuffer = (uint8_t *)malloc(bmp_type::sizeof_buffer(size16(board.width * 10, board.height * 22))*sizeof(uint8_t));
+	bmp_type gameBmp { size16(board.width * 10, board.height * 22), gameBmpBuffer };
+
+	int displayerScore = -1;
 	while (true)
 	{
-		updateInput();
-
-		ESP_LOGE(TAG_FS, "frame");
+		updateInput();		
+		TickType_t tick = xTaskGetTickCount();
 
 		if (backButtonPressed)
 		{
@@ -178,77 +198,136 @@ Main::GameState Main::runGameScreen()
 		{
 			board.rotate();
 		}
-
-		TickType_t tick = xTaskGetTickCount();
-		if (!board.frame(tick))
+		if (pauseButtonPressed)
 		{
-			ESP_LOGE(TAG_FS, "IZGUBIO/LA SI");
+			paused = true;
+			return GameState::Paused;
+		}
+		if (upButtonPressed)
+		{
+			board.drop(tick);
 		}
 
+
+
+
+		if (!board.frame(tick))
+		{
+			return GameState::Lost;
+		}
+
+		if (displayerScore != board.score)
+		{
 		char score_number[128];
 		sprintf(score_number, "%d", board.score);
 		srect16 score_number_rect = textFont.measure_text((ssize16)lcd.dimensions(), score_number).bounds().center((srect16)score_text_rect).offset(0, 10);
 		draw::filled_rectangle(lcd, score_number_rect, color<pixel_type>::black);
-		draw::text(lcd, score_number_rect, score_number, textFont, color<pixel_type>::white);
+		draw::text(lcd, score_number_rect, score_number, textFont, color<pixel_type>::gray);
+
+		displayerScore = board.score;
+		}
 
 		for (int i = 0; i < 4; ++i)
 			for (int j = 0; j < 4; ++j)
 			{
-				pixel_type rectColor = getColor(abs(board.nextShape[i][j]));
-				rect16 rectangle(point16(120 + i * 5, 45 + j * 5), size16(5, 5));
+				pixel_type rectColor = getColor(abs(board.nextShape[i][j] * board.nextShapeColor));
+				rect16 rectangle(point16(NextRectangle_rect.x1 + 6 + i * 5, NextRectangle_rect.y1 + 6 + j * 5), size16(5, 5));
 				draw::filled_rectangle(lcd, rectangle, rectColor);
 			}
-
-		// petlja prolazi kroz matricu
+		
 		for (int i = 0; i < board.width; ++i)
 		{
 			for (int j = 0; j < board.height; ++j)
-			{
-				// tile je jedno polje u matrici
-				// na osnovu toga da li je polje popunjeno ili ne
-				// popunjavamo ga crvenom (popunjeno) ili crnom (nepopunjeno)
-				int tile = abs(board.board[i][j]);
-				pixel_type rectColor;
-
-				if (tile == 0)
-				{
-					rectColor = color<pixel_type>::black;
-				}
-				else
-				{
-					switch (tile)
-					{
-					case 1:
-						rectColor = color<pixel_type>::red;
-						break;
-					case 2:
-						rectColor = color<pixel_type>::orange;
-						break;
-					case 3:
-						rectColor = color<pixel_type>::yellow;
-						break;
-					case 4:
-						rectColor = color<pixel_type>::green;
-						break;
-					case 5:
-						rectColor = color<pixel_type>::blue;
-						break;
-					case 6:
-						rectColor = color<pixel_type>::violet;
-						break;
-					default:
-						rectColor = color<pixel_type>::brown;
-						ESP_LOGE(TAG_FS, "Invalid board value");
-						break;
-					}
-				}
-
-				// kreiramo polje
-				rect16 rectangle(point16(55 + i * 5, 10 + j * 5), size16(5, 5));
-				draw::filled_rectangle(lcd, rectangle, rectColor);
+			{				
+				pixel_type rectColor = getColor(abs(board.board[i][j]));
+				rect16 rectangle(point16(i * 5, j * 5), size16(5, 5));
+				draw::filled_rectangle(gameBmp, rectangle, rectColor);
 			}
 		}
+
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 4; ++j)
+				if (board.currentShape[i][j] < 0)
+				{
+					rect16 rectangle(point16(board.currentShapeX * 5 + i * 5, board.getDropCoordinate() * 5 + j * 5), size16(5, 5));
+					draw::rectangle(gameBmp, rectangle, color<pixel_type>::white);
+				}
+
+		draw::bitmap(lcd, rect16(point16(55, 10), size16(50, 110)), gameBmp, rect16(point16(0, 0), size16(50, 110)));
 	}
+
+	return GameState::Start;
+}
+
+Main::GameState Main::runPauseScreen()
+{
+	const char* text1 = "PAUSED";
+	const char* text2 = "Press to continue";		
+	srect16 text1_rect = textFont.measure_text((ssize16)lcd.dimensions(), text1).bounds().center((srect16)lcd.bounds().offset(0, -5));
+	srect16 text2_rect = textFont.measure_text((ssize16)lcd.dimensions(), text2).bounds().center((srect16)lcd.bounds().offset(0, +5));
+	srect16 textRectangle_rect = srect16(spoint16(0, 0), ssize16(text2_rect.width() + 2, 34)).center((srect16)lcd.bounds());
+
+	draw::filled_rectangle(lcd, textRectangle_rect, color<pixel_type>::black);
+	draw::rectangle(lcd, textRectangle_rect, color<pixel_type>::white);
+	draw::text(lcd, text1_rect, text1, textFont, color<pixel_type>::white);
+	draw::text(lcd, text2_rect, text2, textFont, color<pixel_type>::white);	
+
+	while (true)
+	{
+		updateInput();
+
+		if (upButtonPressed ||
+			downButtonPressed ||
+			leftButtonPressed ||
+			rightButtonPressed ||
+			selectButtonPressed ||
+			backButtonPressed ||
+			pauseButtonPressed)
+			break;
+	}
+
+	lcd.clear(lcd.bounds());
+
+	return GameState::Running;
+}
+
+Main::GameState Main::runLostScreen()
+{
+	const char* text1 = "YOU LOST";
+	char text2[128];
+	sprintf(text2, "Score: %d", board.score);
+	srect16 text1_rect = textFont.measure_text((ssize16)lcd.dimensions(), text1).bounds().center((srect16)lcd.bounds().offset(0, -5));
+	srect16 text2_rect = textFont.measure_text((ssize16)lcd.dimensions(), text2).bounds().center((srect16)lcd.bounds().offset(0, +5));
+	srect16 textRectangle_rect = srect16(spoint16(0, 0), ssize16(text2_rect.width() + 2, 34)).center((srect16)lcd.bounds());
+
+	draw::filled_rectangle(lcd, textRectangle_rect, color<pixel_type>::black);
+	draw::rectangle(lcd, textRectangle_rect, color<pixel_type>::white);
+	draw::text(lcd, text1_rect, text1, textFont, color<pixel_type>::white);
+	draw::text(lcd, text2_rect, text2, textFont, color<pixel_type>::white);
+
+	for (int i = 0; i < 9; ++i)
+		previousScores[i + 1] = previousScores[i];
+
+	if (previousScoreCount < 10)
+		++previousScoreCount;
+
+	previousScores[0] = board.score;
+
+	while (true)
+	{
+		updateInput();
+
+		if (upButtonPressed ||
+			downButtonPressed ||
+			leftButtonPressed ||
+			rightButtonPressed ||
+			selectButtonPressed ||
+			backButtonPressed ||
+			pauseButtonPressed)
+			break;
+	}
+
+	lcd.clear(lcd.bounds());
 
 	return GameState::Start;
 }

@@ -25,7 +25,7 @@ namespace tetrics_module
 	{		
 		TickType_t downDif = pdMS_TO_TICKS(downDifMS);
 
-		if (downDif < currtick - lastTick)
+		if (downDif <= currtick - lastTick)
 		{
 			if (checkCollision())
 				moveDown();
@@ -36,6 +36,32 @@ namespace tetrics_module
 		}
 		
 		return true;
+	}
+	int board::getDropCoordinate()
+	{
+		for (int k = 0; k < height; ++k)
+			for (int i = 0; i < 4; i++)
+				for (int j = 0; j < 4; j++)
+					if (currentShape[i][j] < 0 && (k + j + 1 >= height || board[currentShapeX + i][k + j + 1] > 0))
+						return k;
+
+		return 0;
+	}
+	void board::drop(TickType_t currTick)
+	{
+		for (int j = std::min(currentShapeY + 3, height - 1); j >= std::max(currentShapeY, 0); j--)
+			for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
+				if (board[i][j] < 0)
+					board[i][j] = 0;
+		
+		currentShapeY = getDropCoordinate();
+
+		for (int j = std::min(currentShapeY + 3, height - 1); j >= std::max(currentShapeY, 0); j--)
+			for (int i = std::max(currentShapeX, 0); i < std::min(currentShapeX + 4, width); i++)
+				if (currentShape[i - currentShapeX][j - currentShapeY] < 0)
+					board[i][j] = -currentShapeColor;
+
+		lastTick = currTick - pdMS_TO_TICKS(downDifMS);
 	}
 	void board::clear()
 	{
@@ -220,5 +246,5 @@ namespace tetrics_module
 		}
 
 		return { { } };
-	}
+	}	
 }

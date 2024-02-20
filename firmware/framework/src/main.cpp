@@ -105,17 +105,20 @@ void Main::run(void) {
 	{
 		switch(gameState)
 		{
-		case GameState::Start:
-			ESP_LOGD(TAG_FS, "Start screen");
+		case GameState::Start:			
 			gameState = runStartScreen();
 			break;
-		case GameState::Running:
-		ESP_LOGD(TAG_FS, "Running screen");
+		case GameState::Running:		
 			gameState = runGameScreen();
 			break;
-		case GameState::End:
-		ESP_LOGD(TAG_FS, "End screen");
+		case GameState::Paused:
+			gameState = runPauseScreen();
+			break;
+		case GameState::End:		
 			gameState = runEndScreen();
+			break;
+		case GameState::Lost:
+			gameState = runLostScreen();
 			break;
 		case GameState::Exit:
 			exitGame = true;
